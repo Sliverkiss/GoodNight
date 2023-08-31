@@ -12,7 +12,7 @@
 *************************
 
 青龙：
-1.登录后抓包 域名下的xwyapi.newhope.cn和customerId，用#连接，填写到xwy_data,多账号用 @ 分割
+1.登录后抓包 xwyapi.newhope.cn 域名下的Authorization和customerId，用#连接，填写到xwy_data,多账号用 @ 分割
 2.可选推送：将bark的key填写到bark_key，不填默认使用青龙自带的推送
 
 Loon: 
