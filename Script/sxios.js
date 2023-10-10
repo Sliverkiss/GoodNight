@@ -27,7 +27,7 @@ loon
 ------------------------------------------
 [Script]
 cron "10 8 * * *" script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/sxios.js, timeout=10, tag=松鼠ios
-http-request ^https\:\/\/ios\.xiezhenge\.com\/user script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/sxios.js.js,timeout=10, tag=松鼠ios获取token
+http-request ^https\:\/\/ios\.xiezhenge\.com\/user script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/sxios.js,timeout=10, tag=松鼠ios获取token
 [MITM]
 hostname = ios.xiezhenge.com
 ------------------------------------------
