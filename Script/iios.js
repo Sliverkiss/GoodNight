@@ -103,7 +103,7 @@ async function main() {
         const ckVal = $request.headers['Authorization'] || $request.headers['authorization'];
         if (ckVal) {
             $.setdata(ckVal, ckName);
-            $.msg($.name, "", "获取签到Cookie成功🎉");
+            $.msg($.name, "", `获取签到Cookie成功🎉\n+ckVal`);
         } else {
             $.msg($.name, "", "错误获取签到Cookie失败");
         }
