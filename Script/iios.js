@@ -130,7 +130,7 @@ async function signIn(huihuiType,token) {
         aeskey = getKey();
         Sign = RSA_Public_Encrypt(aeskey);
         url = url = 'https://www.iios.fun/api/task';
-        body = `{"type":${huihuiType}}`
+        body = `{"type":${huihuiType},"webapp":true}`
         body = AES_Encrypt(body, aeskey);
         headers = getHeaders(Sign,token);
         const rest = {
