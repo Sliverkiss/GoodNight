@@ -16,7 +16,7 @@
         "val": "",
         "type": "textarea",
         "placeholder": "",
-        "desc": ""
+        "desc": "抓包www.iios.fun域名下的Authorization，填写到iios_data,多账号用@分割"
       }],
       "script": "https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/iios.js",
       "author": "@Sliverkiss",
