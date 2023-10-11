@@ -41,6 +41,15 @@ QuantumultX
 
 [mitm]
 hostname = www.iios.fun
+
+[rewrite_local]
+^https:\/\/www\.iios\.fun\/api\/(base|user\/info)$ url script-request-header https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/iios.js
+
+[task_local]
+1 0 * * * https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/iios.js, tag=iios签到, enabled=true
+
+[mitm]
+hostname = www.iios.fun
 ⚠️【免责声明】
 ------------------------------------------
 1、此脚本仅用于学习研究，不保证其合法性、准确性、有效性，请根据情况自行判断，本人对此不承担任何保证责任。
