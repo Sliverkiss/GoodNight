@@ -97,12 +97,16 @@ async function main() {
     }
     await Promise.all(taskall);
 }
-
-function getToken() {
-    headers = $request.headers
-    if (headers.hasOwnProperty("Authorization")) {
-        $.setdata(headers['Authorization'], _key);
-        $.msg($.name, '获取Authorization成功🎉', headers['Authorization']);
+//获取Cookie
+ function getToken() {
+    if ($request && $request.method != 'OPTIONS') {
+        const ckVal = $request.headers['Authorization'] || $request.headers['authorization'];
+        if (ckVal) {
+            $.setdata(ckVal, ckName);
+            $.msg($.name, "", "获取签到Cookie成功🎉");
+        } else {
+            $.msg($.name, "", "错误获取签到Cookie失败");
+        }
     }
 }
 function getKey() {
