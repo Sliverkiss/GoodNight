@@ -8,7 +8,7 @@
 
 网站入口地址：https://yuchen.tonghuaios.com?tg=add3ea3f
 介意邀请码可以把后面的参数删掉
-使用方法：抓取yuchenios.com域名下签到的cookie填写到yuchenCookie，多账号用 @ 分隔
+使用方法：抓取yuchen.tonghuaios.com域名下签到的cookie填写到yuchenCookie，多账号用 @ 分隔
 脚本兼容：Surge、QuantumultX、Loon、Shadowrocket、Node.js
 只测试过loon和青龙，其它环境请自行尝试】
 
@@ -17,10 +17,10 @@ loon：
 
 [Script]
 cron "14 0 * * *" script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/yuchenios.js, timeout=300, tag=ios游戏迷
-http-request ^https:\/\/yuchenios.com\/users\?tab=index script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/yuchenios.js, timeout=10, tag=ios游戏迷获取token
+http-request ^https:\/\/yuchen.tonghuaios.com\/users\?tab=index script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/yuchenios.js, timeout=10, tag=ios游戏迷获取token
 
 [MITM]
-hostname =yuchenios.com
+hostname =yuchen.tonghuaios.com
 
 ====================================
 ⚠️【免责声明】
