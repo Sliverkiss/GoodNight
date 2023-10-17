@@ -26,7 +26,7 @@ hostname =zxcstxt.com
 QuantumultX
 ------------------------------------------
 [rewrite_local]
-^https\:\/\/ios\.xiezhenge\.com\/user url script-request-header https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/zhixuan.js
+^https:\/\/zxcstxt\.com\/user\/ url script-request-header https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/zhixuan.js
 
 [mitm]
 hostname =zxcstxt.com
