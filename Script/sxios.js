@@ -1,5 +1,5 @@
 /**************************************
-@Name：松鼠ios账 签到 积分可以兑换苹果付费应用账号
+@Name：松鼠ios 签到 积分可以兑换苹果付费应用账号
 @Author：Sliverkiss
 @Date：2023-10-10 12:17:56
 
@@ -8,8 +8,6 @@
 2023.10.23 更换域名，移除登录接口
 
 网址入口：https://ios.songshuyouxi.com
-
-使用方法：将账号和用户名用#拼接，如账号#密码，填写到hxsy_base，多账号用 & 分隔
 
 脚本兼容：Surge、QuantumultX、Loon、Shadowrocket、Node.js
 只测试过loon、QuantumultX和青龙，其它环境请自行尝试】
