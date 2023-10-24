@@ -10,7 +10,34 @@
 网址入口：https://ios.songshuyouxi.com
 
 脚本兼容：Surge、QuantumultX、Loon、Shadowrocket、Node.js
-只测试过loon、QuantumultX和青龙，其它环境请自行尝试】
+只测试过loon、QuantumultX和青龙，其它环境请自行尝试
+
+*************************
+【 签到脚本使用教程 】:
+*************************
+青龙：
+1.登录后抓包 https://ios.xiezhenge.com/user , 找到 Cookie，填写到sxios_data,多账号用 @ 分割
+2.可选推送：将bark的key填写到bark_key，不填默认使用青龙自带的推送
+Loon: 
+1.复制Cookie脚本到本地
+2.打开小程序->个人中心->登录后刷新，确保拿到完整的Cookie，若提示获取Cookie成功则可以使用该脚本
+3.关闭Cookie脚本
+------------------------------------------
+loon
+------------------------------------------
+[Script]
+cron "10 8 * * *" script-path=sxios.js, timeout=10, tag=松鼠ios
+http-request ^https\:\/\/ios\.songshuyouxi\.com\/user script-path=sxios.js,timeout=10, tag=松鼠ios获取token
+[MITM]
+hostname = ios.songshuyouxi.com
+------------------------------------------
+QuantumultX
+------------------------------------------
+[rewrite_local]
+^https\:\/\/ios\.songshuyouxi\.com\/user url script-request-header sxios.js
+[mitm]
+hostname =ios.songshuyouxi.com
+====================================
 
 ====================================
 ⚠️【免责声明】
