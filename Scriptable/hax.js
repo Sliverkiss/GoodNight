@@ -10,7 +10,7 @@ const goupdate = true;
 const $ = importModule("Env");
 const title = `Hax`;
 //将cookie填入下面''中
-const token = 'stel_token=a68ec435b0769cd3c3c1f6cc5cf868afa68ec422a68fcb1ce94f5200275f56c4a6197; stel_ssid=fe942041e442c5347d_476565603848126849#PHPSESSID=27394ab9452e78cca74115443c399a2c;';
+const token = '';
 //preview size
 const preview = "small";
 const spacing = 5;
