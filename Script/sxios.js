@@ -3,10 +3,7 @@
 @Author：Sliverkiss
 @Date：2023-10-10 12:17:56
 
-2023.10.19 新增查询积分余额
-2023.10.20 修复了青龙运行脚本失败的问题
-2023.10.23 更换域名，移除登录接口
-2024.01.04 重构脚本，减少等待时间，修复由于签到积分变而导致获取nonce失败的问题
+2024.02.11 修复查询用户页面失败的问题
 
 网址入口：https://ios.songshuyouxi.com
 
@@ -100,7 +97,7 @@ class UserInfo {
         try {
             const options = {
                 //签到任务调用签到接口
-                url: `https://${host}/user`,
+                url: `https://${host}/user1`,
                 //请求头, 所有接口通用
                 headers: this.headers
             };
@@ -143,7 +140,7 @@ class UserInfo {
     async point() {
         try {
             const options = {
-                url: `https://${host}/user`,
+                url: `https://${host}/user1`,
                 //请求头, 所有接口通用
                 headers: this.headers
             };
