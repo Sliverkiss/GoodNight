@@ -4,7 +4,7 @@
 @Date: 2024-03-24 10:20:18
 @Description: CFB Group旗下小程序签到：适用于DQ、棒约翰、Brut Eatery、小金玡居
 ------------------------------------------
-重写：打开DQ点单小程序，进入签到页面.
+重写：打开DQ点单小程序，进入签到页面，签到日历
 
 [Script]
 http-response ^https:\/\/wechat\.dairyqueen\.com\.cn\/member\/info script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/cfb.js, requires-body=true, timeout=60, tag=CFB Group获取token
