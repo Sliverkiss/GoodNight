@@ -1,7 +1,7 @@
 /*
 ------------------------------------------
 @Author: Sliverkiss
-@Date: 2024-03-24 10:20:18
+@Date: 2024-03-24 11:20:18
 @Description: CFB Group旗下小程序签到：适用于DQ、棒约翰、Brut Eatery、小金玡居
 ------------------------------------------
 重写：打开DQ点单小程序，进入签到页面.
@@ -90,7 +90,7 @@ async function main() {
 }
 //签到
 async function signin(item) {
-    $.tenant = item.type
+    _headers.tenant = item.type
     const opts = {
         url: "/memSignIn/signIn",
         type: 'post'
