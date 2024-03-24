@@ -1,7 +1,7 @@
 /*
 ------------------------------------------
 @Author: Sliverkiss
-@Date: 2024-03-24 11:20:18
+@Date: 2024-03-24 12:20:18
 @Description: CFB Group旗下小程序签到：适用于DQ、棒约翰、Brut Eatery、小金玡居
 ------------------------------------------
 重写：打开DQ点单小程序，进入签到页面.
@@ -85,7 +85,10 @@ async function main() {
             await sendMsg($.notifyMsg.join("\n"));
         }
     } catch (e) {
-        $.log(`⛔️ main run error => ${e}`);
+        let error = `⛔️ main run error => ${e}`;
+        $.log(error);
+        throw new Error(error);
+
     }
 }
 //签到
@@ -136,10 +139,14 @@ async function getCookie() {
 
 //主程序执行入口
 !(async () => {
-    if (typeof $request != "undefined") {
-        await getCookie();
-    } else {
-        await main();
+    try {
+        if (typeof $request != "undefined") {
+            await getCookie();
+        } else {
+            await main();
+        }
+    } catch (e) {
+        throw e;
     }
 })()
     .catch((e) => { $.logErr(e), $.msg($.name, `⛔️ script run error!`, e) })
