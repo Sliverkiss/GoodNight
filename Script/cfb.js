@@ -1,10 +1,10 @@
 /*
 ------------------------------------------
 @Author: Sliverkiss
-@Date: 2024-03-24 12:20:18
+@Date: 2024-03-24 10:20:18
 @Description: CFB Group旗下小程序签到：适用于DQ、棒约翰、Brut Eatery、小金玡居
 ------------------------------------------
-重写：打开DQ点单小程序，进入签到页面->签到日历.
+重写：打开DQ点单小程序，进入签到页面.
 
 [Script]
 http-response ^https:\/\/wechat\.dairyqueen\.com\.cn\/member\/info script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/cfb.js, requires-body=true, timeout=60, tag=CFB Group获取token
@@ -99,7 +99,7 @@ async function signin(item) {
         type: 'post'
     }
     let res = await fetch(opts);
-    $.log(`${$.doFlag[res?.code == 500]} ${item.name}:${res?.message}`);
+    $.log(`${$.doFlag[res?.code == 200]} ${item.name}:${res?.message||"签到信息不存在，请先注册账号"}`);
     return res?.message;
 }
 //查询用户信息
@@ -130,7 +130,6 @@ async function getCookie() {
     }
 
     const index = userCookie.findIndex(e => e.userId == newData.userId);
-
     userCookie[index] ? userCookie[index] = newData : userCookie.push(newData);
 
     $.setjson(userCookie, ckName);
