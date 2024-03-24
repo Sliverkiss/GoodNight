@@ -24,7 +24,7 @@ hostname = wechat.dairyqueen.com.cn
 */
 const $ = new Env("CFB Group");
 const ckName = "cfb_data";
-const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName), []);
+const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName))||[];
 //notify
 $.notifyMsg = []
 //debug
@@ -133,7 +133,7 @@ async function getCookie() {
             "userName": memberName,
         }
 
-        const index = userCookie.findIndex(e => e.userId == newData.userId);
+        const index = userCookie?.findIndex(e => e.userId == newData.userId);
         userCookie[index] ? userCookie[index] = newData : userCookie.push(newData);
 
         $.setjson(userCookie, ckName), $.msg($.name, `🎉${newData.userName}更新token成功!`, ``);
