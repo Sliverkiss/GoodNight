@@ -7,7 +7,7 @@
 重写：打开DQ点单小程序，点击我的查看积分.
 
 [Script]
-http-response ^https:\/\/wechat\.dairyqueen\.com\.cn\/member\/info script-path=, requires-body=true, timeout=60, tag=CFB Group获取token
+http-response ^https:\/\/wechat\.dairyqueen\.com\.cn\/member\/info script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/cfb.js, requires-body=true, timeout=60, tag=CFB Group获取token
 
 [MITM]
 hostname = wechat.dairyqueen.com.cn
