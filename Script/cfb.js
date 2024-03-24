@@ -27,7 +27,7 @@ const ckName = "cfb_data";
 const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName), []);
 //notify
 $.notifyMsg = []
-const sendMsg = (title = "") => $.msg($.name, "", $.notifyMsg.join("\n"));
+const sendMsg = (t = "") => $.msg($.name, t, $.notifyMsg.join("\n"));
 //debug
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 $.doFlag = { "success": "✅", "error": "⛔️" };
@@ -55,8 +55,8 @@ const fetch = async (o) => {
 async function main() {
     try {
         //check accounts
+        if (!userCookie?.length) return $.msg($.name, `⛔️ no available accounts found`, "")
         $.log(`⚙️ a total of ${userCookie?.length ?? 0} accounts were identified during this operation.\n`);
-        if (!userCookie?.length) return $.msg($.name, `⛔️ no available accounts found`, "please obtain cookies first")
         let index = 0;
         //doTask of userList
         for (let user of userCookie) {
@@ -121,6 +121,7 @@ async function getCookie() {
     }
 
     const index = userCookie.findIndex(e => e.userId == newData.userId);
+
     userCookie[index] ? userCookie[index] = newData : userCookie.push(newData);
 
     $.setjson(userCookie, ckName);
