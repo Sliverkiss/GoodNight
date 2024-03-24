@@ -55,7 +55,7 @@ const fetch = async (o) => {
 async function main() {
     try {
         //check accounts
-        if (!userCookie?.length) return $.msg($.name, `⛔️ no available accounts found`, "")
+        if (!userCookie?.length) throw new Error("no available accounts found");
         $.log(`⚙️ a total of ${userCookie?.length ?? 0} accounts were identified during this operation.\n`);
         let index = 0;
         //doTask of userList
@@ -70,7 +70,10 @@ async function main() {
             //task 
             let { groupPoints: pointF } = await getUserInfo() ?? {};
             if ($.ckStatus) {
-                let signList = [{ name: "DQ点单小程序", "type": 1 }, { name: "棒约翰点单小程序", "type": 2 }]
+                let signList = [
+                    { name: "DQ点单小程序", "type": 1 },
+                    { name: "棒约翰点单小程序", "type": 2 }
+                ]
                 for (let item of signList) {
                     await signin(item);
                 }
@@ -85,60 +88,63 @@ async function main() {
             await sendMsg($.notifyMsg.join("\n"));
         }
     } catch (e) {
-        let error = `⛔️ main run error => ${e}`;
-        $.log(error);
-        throw new Error(error);
-
+        throw e
     }
 }
 //签到
 async function signin(item) {
-    _headers.tenant = item.type
-    const opts = {
-        url: "/memSignIn/signIn",
-        type: 'post'
+    try {
+        _headers.tenant = item.type
+        const opts = {
+            url: "/memSignIn/signIn",
+            type: 'post'
+        }
+        let res = await fetch(opts);
+        $.log(`${$.doFlag[res?.code == 200]} ${item.name}:${res?.message || "签到信息不存在，请先注册账号"}`);
+        return res?.message;
+    } catch (e) {
+        $.log(`⛔️ ${item.name}签到失败！${e}`)
     }
-    let res = await fetch(opts);
-    $.log(`${$.doFlag[res?.code == 200]} ${item.name}:${res?.message||"签到信息不存在，请先注册账号"}`);
-    return res?.message;
 }
 //查询用户信息
 async function getUserInfo() {
-    let res = await fetch("/member/info");
-    return res?.data;
+    try {
+        let res = await fetch("/member/info");
+        return res?.data;
+    } catch (e) {
+        $.log(`⛔️ 查询用户信息失败！${e}`)
+    }
 }
 //获取Cookie
 async function getCookie() {
-    if ($request && $request.method === 'OPTIONS') {
-        $.msg($.name, '️️⛔️ Incorrect script execution method,only cron is permitted', "")
-        return;
-    }
-    const header = ObjectKeys2LowerCase($request.headers);
-    const body = $.toObj($response.body);
+    try {
+        if ($request && $request.method === 'OPTIONS') throw new Error("Incorrect script execution method,only cron is permitted");
 
-    let token = header.cookie;
-    if (!(token && body)) {
-        $.msg($.name, `️⛔️ get token error,the value is empty!`, "")
-        return;
-    }
-    const { memAccount: { id: userId }, memberName } = body?.data
-    const newData = {
-        "userId": userId,
-        "avatar": "",
-        "token": token,
-        "userName": memberName,
-    }
+        const header = ObjectKeys2LowerCase($request.headers);
+        const body = $.toObj($response.body);
+        let token = header.cookie;
+        if (!(token && body)) throw new Error("get token error,the value is empty");
 
-    const index = userCookie.findIndex(e => e.userId == newData.userId);
-    userCookie[index] ? userCookie[index] = newData : userCookie.push(newData);
+        const { memAccount: { id: userId }, memberName } = body?.data
+        const newData = {
+            "userId": userId,
+            "avatar": "",
+            "token": token,
+            "userName": memberName,
+        }
 
-    $.setjson(userCookie, ckName);
-    $.msg($.name, `🎉${newData.userName}更新token成功!`, ``);
+        const index = userCookie.findIndex(e => e.userId == newData.userId);
+        userCookie[index] ? userCookie[index] = newData : userCookie.push(newData);
+
+        $.setjson(userCookie, ckName), $.msg($.name, `🎉${newData.userName}更新token成功!`, ``);
+    } catch (e) {
+        throw e;
+    }
 }
 
 //主程序执行入口
 !(async () => {
-    try {
+    try{
         if (typeof $request != "undefined") {
             await getCookie();
         } else {
@@ -148,7 +154,7 @@ async function getCookie() {
         throw e;
     }
 })()
-    .catch((e) => { $.logErr(e), $.msg($.name, `⛔️ script run error!`, e) })
+    .catch((e) =>{$.logErr(e), $.msg($.name, `⛔️ script run error!`, e.message || e)})
     .finally(async () => {
         $.done({ ok: 1 });
     });
