@@ -29,10 +29,11 @@ const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName),
 $.notifyMsg = []
 //debug
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
-$.doFlag = { "success": "✅", "error": "⛔️" };
+$.doFlag = { "true": "✅", "false": "⛔️" };
 //------------------------------------------
 const baseUrl = "https://wechat.dairyqueen.com.cn"
 const _headers = {
+    'tenant': $.tenant || 1,
     'channel': `202`,
     'Cookie': $.token,
     'User-Agent': `Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f37) NetType/WIFI Language/zh_CN`,
@@ -43,7 +44,7 @@ const fetch = async (o) => {
         if (o?.url?.startsWith("/") || o?.url?.startsWith(":")) o.url = baseUrl + o.url
         const res = await Request({ ...o, headers: o.headers || _headers, url: o.url })
         debug(res, o?.url?.replace(/\/+$/, '').substring(o?.url?.lastIndexOf('/') + 1));
-        if (res?.code == 500) throw new Error(`用户需要去登录`);
+        if (res?.code == 500 || res?.code == 409) throw new Error(`用户需要去登录`);
         return res;
     } catch (e) {
         $.ckStatus = false;
@@ -67,15 +68,16 @@ async function main() {
                 $.avatar = "",
                 $.token = user.token;
             //task 
-            await getUserInfo();
+            let { groupPoints: pointF } = await getUserInfo();
             if ($.ckStatus) {
                 let signList = [{ name: "DQ点单小程序", "type": 1 }, { name: "棒约翰点单小程序", "type": 2 }]
                 for (let item of signList) {
                     await signin(item);
                 }
-                let { memberName, groupPoints, memberPhoto } = await getUserInfo() ?? {};
+                let { memberName, groupPoints: pointE, memberPhoto } = await getUserInfo() ?? {};
                 $.avatar = memberPhoto;
-                DoubleLog(`当前用户:${memberName}\n点单签到:${dqMsg}\n披萨签到:${byhMsg}\n查询积分:${groupPoints}`)
+                $.title = `本次运行共获得${pointE - 0 - pointF}积分`
+                DoubleLog(`当前用户:${memberName}\n查询积分:${pointE}`)
             } else {
                 DoubleLog(`⛔️ 「${user.userName ?? `账号${index}`}」check ck error!`)
             }
@@ -88,13 +90,13 @@ async function main() {
 }
 //签到
 async function signin(item) {
-    _headers.tenant = item.type;
+    $.tenant = item.type
     const opts = {
         url: "/memSignIn/signIn",
         type: 'post'
     }
     let res = await fetch(opts);
-    $.log(`✅ ${item.name}:${res?.message}`);
+    $.log(`${$.doFlag[res?.code == 500]} ${item.name}:${res?.message}`);
     return res?.message;
 }
 //查询用户信息
