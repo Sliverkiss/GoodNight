@@ -4,7 +4,7 @@
 @Date: 2024-03-24 10:20:18
 @Description: CFB Group旗下小程序签到：适用于DQ、棒约翰、Brut Eatery、小金玡居
 ------------------------------------------
-重写：打开DQ点单小程序，点击我的查看积分.
+重写：打开DQ点单小程序，进入签到页面.
 
 [Script]
 http-response ^https:\/\/wechat\.dairyqueen\.com\.cn\/member\/info script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/cfb.js, requires-body=true, timeout=60, tag=CFB Group获取token
@@ -27,7 +27,6 @@ const ckName = "cfb_data";
 const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName), []);
 //notify
 $.notifyMsg = []
-const sendMsg = (t = "") => $.msg($.name, t, $.notifyMsg.join("\n"));
 //debug
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 $.doFlag = { "success": "✅", "error": "⛔️" };
@@ -44,7 +43,7 @@ const fetch = async (o) => {
         if (o?.url?.startsWith("/") || o?.url?.startsWith(":")) o.url = baseUrl + o.url
         const res = await Request({ ...o, headers: o.headers || _headers, url: o.url })
         debug(res, o?.url?.replace(/\/+$/, '').substring(o?.url?.lastIndexOf('/') + 1));
-        //if (res?.code == -1 || res?.code == 2) throw new Error(`用户需要去登录`);
+        if (res?.code == 500) throw new Error(`用户需要去登录`);
         return res;
     } catch (e) {
         $.ckStatus = false;
@@ -61,8 +60,12 @@ async function main() {
         //doTask of userList
         for (let user of userCookie) {
             //init of user
-            $.log(`🚀 user:${user?.userName || ++index} start work`), $.notifyMsg = [], $.ckStatus = true;
-            $.token = user.token;
+            $.log(`🚀 user:${user?.userName || ++index} start work`),
+                $.notifyMsg = [],
+                $.ckStatus = true,
+                $.title = "",
+                $.avatar = "",
+                $.token = user.token;
             //task 
             await getUserInfo();
             if ($.ckStatus) {
@@ -70,13 +73,14 @@ async function main() {
                 for (let item of signList) {
                     await signin(item);
                 }
-                let { memberName, groupPoints } = await getUserInfo() ?? {};
+                let { memberName, groupPoints, memberPhoto } = await getUserInfo() ?? {};
+                $.avatar = memberPhoto;
                 DoubleLog(`当前用户:${memberName}\n点单签到:${dqMsg}\n披萨签到:${byhMsg}\n查询积分:${groupPoints}`)
             } else {
                 DoubleLog(`⛔️ 「${user.userName ?? `账号${index}`}」check ck error!`)
             }
             //notify
-            await sendMsg();
+            await sendMsg($.notifyMsg.join("\n"));
         }
     } catch (e) {
         $.log(`⛔️ main run error => ${e}`);
@@ -112,12 +116,12 @@ async function getCookie() {
         $.msg($.name, `️⛔️ get token error,the value is empty!`, "")
         return;
     }
-    const { memAccount: { id: userId }, } = body?.data
+    const { memAccount: { id: userId }, memberName } = body?.data
     const newData = {
         "userId": userId,
-        //"avatar": "",
+        "avatar": "",
         "token": token,
-        "userName": userName,
+        "userName": memberName,
     }
 
     const index = userCookie.findIndex(e => e.userId == newData.userId);
@@ -143,6 +147,7 @@ async function getCookie() {
 
 /** ---------------------------------固定不动区域----------------------------------------- */
 //prettier-ignore
+async function SendMsg(a) { a && (0 < Notify ? $.isNode() ? await notify.sendNotify($.name, a) : $.msg($.name, $.title || "", a, { "media-url": $.avatar }) : $.log(a)) }
 function DoubleLog(o) { o && ($.log(`${o}`), $.notifyMsg.push(`${o}`)) };
 function debug(g, e = "debug") { "true" === $.is_debug && ($.log(`\n-----------${e}------------\n`), $.log("string" == typeof g ? g : $.toStr(g) || `debug error => t=${g}`), $.log(`\n-----------${e}------------\n`)) }
 //From xream's ObjectKeys2LowerCase
