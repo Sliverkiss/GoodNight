@@ -33,7 +33,7 @@ $.doFlag = { "true": "✅", "false": "⛔️" };
 //------------------------------------------
 const baseUrl = "https://wechat.dairyqueen.com.cn"
 const _headers = {
-    'tenant': $.tenant || 1,
+    'tenant': 1,
     'channel': `202`,
     'Cookie': $.token,
     'User-Agent': `Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f37) NetType/WIFI Language/zh_CN`,
@@ -66,9 +66,9 @@ async function main() {
                 $.ckStatus = true,
                 $.title = "",
                 $.avatar = "",
-                $.token = user.token;
+                _headers.Cookie = user.token;
             //task 
-            let { groupPoints: pointF } = await getUserInfo();
+            let { groupPoints: pointF } = await getUserInfo() ?? {};
             if ($.ckStatus) {
                 let signList = [{ name: "DQ点单小程序", "type": 1 }, { name: "棒约翰点单小程序", "type": 2 }]
                 for (let item of signList) {
@@ -149,7 +149,7 @@ async function getCookie() {
 
 /** ---------------------------------固定不动区域----------------------------------------- */
 //prettier-ignore
-async function SendMsg(a) { a && (0 < Notify ? $.isNode() ? await notify.sendNotify($.name, a) : $.msg($.name, $.title || "", a, { "media-url": $.avatar }) : $.log(a)) }
+async function sendMsg(a) { a && ($.isNode() ? await notify.sendNotify($.name, a) : $.msg($.name, $.title || "", a, { "media-url": $.avatar })) }
 function DoubleLog(o) { o && ($.log(`${o}`), $.notifyMsg.push(`${o}`)) };
 function debug(g, e = "debug") { "true" === $.is_debug && ($.log(`\n-----------${e}------------\n`), $.log("string" == typeof g ? g : $.toStr(g) || `debug error => t=${g}`), $.log(`\n-----------${e}------------\n`)) }
 //From xream's ObjectKeys2LowerCase
