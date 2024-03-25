@@ -7,7 +7,7 @@
 重写：打开DQ点单小程序，进入签到页面.
 
 [Script]
-http-response ^https:\/\/(wechat|wxxcx)\.dairyqueen\.com\.cn\/(candaoAppLogin|UserXueLi\?_actionName=getXueLiSign) script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/cfb.js, requires-body=true, timeout=60, tag=CFB Group获取token
+http-request ^https:\/\/(wechat|wxxcx)\.dairyqueen\.com\.cn\/(candaoAppLogin|UserXueLi\?_actionName=getXueLiSign) script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/cfb.js, requires-body=true, timeout=60, tag=CFB Group获取token
 
 [MITM]
 hostname = wechat.dairyqueen.com.cn,wxxcx.dairyqueen.com.cn
