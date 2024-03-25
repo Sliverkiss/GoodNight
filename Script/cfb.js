@@ -162,27 +162,34 @@ async function getUserInfo() {
 async function getCookie() {
     try {
         if ($request && $request.method === 'OPTIONS') throw new Error("Incorrect script execution method,only cron is permitted");
+
         const header = ObjectKeys2LowerCase($request.headers);
         const body = $.toObj($request.body);
-        if (!(header.cookie && body.bindingAccount)) throw new Error("get token error,the value is empty");
 
-        const newData = {
-            "userId": body.bindingAccount,
-            "phone": body.bindingAccount,
-            "openId": "",
-            "unionId": "",
-            "token": header.cookie,
-            "userName": body.bindingAccount
+        if (!(header.cookie && body)) throw new Error("get token error,the value is empty");
+
+        if ($request.url.match(/getXueLiSign/)) {
+            let phone = body?.content?.bindingAccount;
+            const newData = {
+                "userId": phone,
+                "phone": phone,
+                "openId": "",
+                "unionId": "",
+                "token": header.cookie,
+                "userName": phone
+            }
+            const index = userCookie.findIndex(e => e.userId == newData.userId);
+            index !== -1 ? userCookie[index] = newData : userCookie.push(newData);
+            $.setjson(userCookie, ckName);
+        } else {
+            const index = userCookie.findIndex(e => e.userId == body?.bindingAccount);
+            if (index !== -1) {
+                userCookie[index].openId = body.openId;
+                userCookie[index].unionId = body.unionId;
+                $.setjson(userCookie, ckName);
+                $.msg($.name, `🎉${userCookie[index].userName}更新token成功!`, ``)
+            }
         }
-        const index = userCookie.findIndex(e => e.userId == newData.userId);
-
-        $request.url.match(/getXueLiSign/)
-            ? (index !== -1 ? userCookie[index] = newData : userCookie.push(newData))
-            : (index !== -1 ? (
-                (userCookie[index].openId = body.openId),
-                (userCookie[index].unionId = body.unionId),
-                ($.setjson(userCookie, ckName), $.msg($.name, `🎉${newData.userName}更新token成功!`, ``))
-            ) : null);
     } catch (e) {
         throw e;
     }
