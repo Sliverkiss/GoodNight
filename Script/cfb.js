@@ -4,13 +4,13 @@
 @Date: 2024-03-24 10:20:18
 @Description: CFB Group旗下小程序签到：适用于DQ、棒约翰、Brut Eatery、小金玡居
 ------------------------------------------
-重写：打开DQ点单小程序，进入签到页面，签到日历
+重写：打开DQ点单小程序，进入签到页面.
 
 [Script]
-http-response ^https:\/\/wechat\.dairyqueen\.com\.cn\/member\/info script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/cfb.js, requires-body=true, timeout=60, tag=CFB Group获取token
+http-response ^https:\/\/(wechat|wxxcx)\.dairyqueen\.com\.cn\/(candaoAppLogin|UserXueLi\?_actionName=getXueLiSign) script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/cfb.js, requires-body=true, timeout=60, tag=CFB Group获取token
 
 [MITM]
-hostname = wechat.dairyqueen.com.cn
+hostname = wechat.dairyqueen.com.cn,wxxcx.dairyqueen.com.cn
 
 ⚠️【免责声明】
 ------------------------------------------
@@ -24,7 +24,7 @@ hostname = wechat.dairyqueen.com.cn
 */
 const $ = new Env("CFB Group");
 const ckName = "cfb_data";
-const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName))||[];
+const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName), []);
 //notify
 $.notifyMsg = []
 //debug
@@ -35,7 +35,6 @@ const baseUrl = "https://wechat.dairyqueen.com.cn"
 const _headers = {
     'tenant': 1,
     'channel': `202`,
-    'Cookie': $.token,
     'User-Agent': `Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f37) NetType/WIFI Language/zh_CN`,
 };
 const fetch = async (o) => {
@@ -65,11 +64,12 @@ async function main() {
                 $.notifyMsg = [],
                 $.ckStatus = true,
                 $.title = "",
-                $.avatar = "",
-                _headers.Cookie = user.token;
+                $.avatar = "";
             //task 
-            let { groupPoints: pointF } = await getUserInfo() ?? {};
+            let sign = await getXueLiSgin(user);
+            await Login(user, sign);
             if ($.ckStatus) {
+                let { groupPoints: pointF } = await getUserInfo() ?? {};
                 let signList = [
                     { name: "DQ点单小程序", "type": 1 },
                     { name: "棒约翰点单小程序", "type": 2 }
@@ -91,6 +91,50 @@ async function main() {
         throw e
     }
 }
+//获取雪沥Sign
+async function getXueLiSgin(user) {
+    try {
+        $.timestamp = ts13();
+        debug($.timestamp)
+        const opts = {
+            url: "https://wxxcx.dairyqueen.com.cn/UserXueLi",
+            params: { _actionName: "getXueLiSign", serviceId: "4", actionId: "9", key: "30274185e983a6c6" },
+            headers: {
+                'Cookie': user.token,
+                'User-Agent': `Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f37) NetType/WIFI Language/zh_CN`
+            },
+            type: 'post',
+            dataType: "json",
+            body: { "content": { "bindingAccount": user.phone, "tenantId": 1, "channelId": 311, "timestamp": $.timestamp } }
+        }
+        let res = await fetch(opts);
+        if (res?.status == 2) throw new Error(res?.msg || "用户需要去登录");
+        $.log(`${$.doFlag[res?.status == 1]} 获取雪沥Sign:${res?.msg || res?.data?.sign}\n`);
+        return res?.data?.sign;
+    } catch (e) {
+        $.ckStatus = false;
+        $.log(`⛔️ 获取雪沥Sign失败！${e}\n`)
+    }
+}
+
+//登录
+async function Login(user, sign) {
+    try {
+        const opts = {
+            url: "/candaoAppLogin",
+            type: 'post',
+            dataType: "json",
+            body: { "type": "candao", "sign": sign, "bindingAccount": user.phone, "tenantId": 1, "channelId": 311, "timestamp": $.timestamp, "unionId": user.unionId, "openId": user.openId }
+        }
+        let res = await fetch(opts);
+        if (res?.code != 200) throw new Error(res?.message);
+        $.log(`✅ ${user.phone}登录成功!`)
+    } catch (e) {
+        $.ckStatus = false;
+        $.log(`⛔️ ${user?.phone}登录失败！${e}\n`)
+    }
+}
+
 //签到
 async function signin(item) {
     try {
@@ -100,10 +144,9 @@ async function signin(item) {
             type: 'post'
         }
         let res = await fetch(opts);
-        $.log(`${$.doFlag[res?.code == 200]} ${item.name}:${res?.message || "签到信息不存在，请先注册账号"}`);
-        return res?.message;
+        $.log(`${$.doFlag[res?.code == 200]} ${item.name}:${res?.message || "签到信息不存在，请先注册账号"}\n`);
     } catch (e) {
-        $.log(`⛔️ ${item.name}签到失败！${e}`)
+        $.log(`⛔️ ${item.name}签到失败！${e}\n`)
     }
 }
 //查询用户信息
@@ -112,39 +155,46 @@ async function getUserInfo() {
         let res = await fetch("/member/info");
         return res?.data;
     } catch (e) {
-        $.log(`⛔️ 查询用户信息失败！${e}`)
+        $.log(`⛔️ 查询用户信息失败！${e}\n`)
     }
 }
 //获取Cookie
 async function getCookie() {
     try {
         if ($request && $request.method === 'OPTIONS') throw new Error("Incorrect script execution method,only cron is permitted");
-
         const header = ObjectKeys2LowerCase($request.headers);
-        const body = $.toObj($response.body);
-        let token = header.cookie;
-        if (!(token && body)) throw new Error("get token error,the value is empty");
+        const body = $.toObj($request.body);
+        if (!(header.cookie && body.bindingAccount)) throw new Error("get token error,the value is empty");
 
-        const { memAccount: { id: userId }, memberName } = body?.data
         const newData = {
-            "userId": userId,
-            "avatar": "",
-            "token": token,
-            "userName": memberName,
+            "userId": body.bindingAccount,
+            "phone": body.bindingAccount,
+            "openId": "",
+            "unionId": "",
+            "token": header.cookie,
+            "userName": body.bindingAccount
         }
+        const index = userCookie.findIndex(e => e.userId == newData.userId);
 
-        const index = userCookie?.findIndex(e => e.userId == newData.userId);
-        userCookie[index] ? userCookie[index] = newData : userCookie.push(newData);
-
-        $.setjson(userCookie, ckName), $.msg($.name, `🎉${newData.userName}更新token成功!`, ``);
+        $request.url.match(/getXueLiSign/)
+            ? (index !== -1 ? userCookie[index] = newData : userCookie.push(newData))
+            : (index !== -1 ? (
+                (userCookie[index].openId = body.openId),
+                (userCookie[index].unionId = body.unionId),
+                ($.setjson(userCookie, ckName), $.msg($.name, `🎉${newData.userName}更新token成功!`, ``))
+            ) : null);
     } catch (e) {
         throw e;
     }
 }
 
+//13位时间戳
+function ts13() { return Math.round(new Date().getTime()).toString(); }
+
+
 //主程序执行入口
 !(async () => {
-    try{
+    try {
         if (typeof $request != "undefined") {
             await getCookie();
         } else {
@@ -154,7 +204,7 @@ async function getCookie() {
         throw e;
     }
 })()
-    .catch((e) =>{$.logErr(e), $.msg($.name, `⛔️ script run error!`, e.message || e)})
+    .catch((e) => { $.logErr(e), $.msg($.name, `⛔️ script run error!`, e.message || e) })
     .finally(async () => {
         $.done({ ok: 1 });
     });
