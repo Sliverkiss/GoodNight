@@ -32,7 +32,7 @@ const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName),
 //notify
 $.notifyMsg = []
 //debug
-$.is_debug = $.toObj(($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false');
+$.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 $.doFlag = { "true": "✅", "false": "⛔️" };
 
 //------------------------------------------
