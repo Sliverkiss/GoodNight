@@ -1,7 +1,7 @@
 /*
 ------------------------------------------
 @Author: Sliverkiss
-@Date: 2024-03-24 10:20:18
+@Date: 2024-03-28 19:08:18
 @Description: CFB Group旗下小程序签到：适用于DQ、棒约翰、Brut Eatery、小金玡居
 ------------------------------------------
 
@@ -124,13 +124,13 @@ async function getXueLiSgin(user) {
 }
 
 //获取雪沥用户信息
-async function getXueLiUser(user) {
+async function getXueLiUser(token) {
     try {
         const opts = {
             url: "https://wxxcx.dairyqueen.com.cn/UserXueLi",
             params: { _actionName: "getXueLiMember", serviceId: "4", actionId: "1", key: "30274185e983a6c6" },
             headers: {
-                'Cookie': user.token,
+                'Cookie': token,
                 'Connection': `keep-alive`,
                 'Accept-Encoding': `gzip,compress,br,deflate`,
                 'Referer': `https://servicewechat.com/wx22e5ce7c766b4b78/134/page-frame.html`,
