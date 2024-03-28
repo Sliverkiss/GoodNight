@@ -1,9 +1,12 @@
 /*
 ------------------------------------------
 @Author: Sliverkiss
-@Date: 2024-03-24 10:20:18
+@Date: 2024-03-28 18:47:18
 @Description: CFB Group旗下小程序签到：适用于DQ、棒约翰、Brut Eatery、小金玡居
 ------------------------------------------
+
+一天10积分，ck只有几个小时，没有code就不要玩了。
+
 重写：打开DQ点单小程序，进入签到页面.
 
 [Script]
@@ -24,12 +27,14 @@ hostname = wechat.dairyqueen.com.cn,wxxcx.dairyqueen.com.cn
 */
 const $ = new Env("CFB Group");
 const ckName = "cfb_data";
+$.appid = 'wx22e5ce7c766b4b78';  // 小程序 appId
 const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName), []);
 //notify
 $.notifyMsg = []
 //debug
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 $.doFlag = { "true": "✅", "false": "⛔️" };
+
 //------------------------------------------
 const baseUrl = "https://wechat.dairyqueen.com.cn"
 const _headers = {
@@ -53,6 +58,7 @@ const fetch = async (o) => {
 //------------------------------------------
 async function main() {
     try {
+        await getXueLiUserList();
         //check accounts
         if (!userCookie?.length) throw new Error("no available accounts found");
         $.log(`⚙️ a total of ${userCookie?.length ?? 0} accounts were identified during this operation.\n`);
@@ -117,6 +123,33 @@ async function getXueLiSgin(user) {
     }
 }
 
+//获取雪沥用户信息
+async function getXueLiUser(user) {
+    try {
+        const opts = {
+            url: "https://wxxcx.dairyqueen.com.cn/UserXueLi",
+            params: { _actionName: "getXueLiMember", serviceId: "4", actionId: "1", key: "30274185e983a6c6" },
+            headers: {
+                'Cookie': user.token,
+                'Connection': `keep-alive`,
+                'Accept-Encoding': `gzip,compress,br,deflate`,
+                'Referer': `https://servicewechat.com/wx22e5ce7c766b4b78/134/page-frame.html`,
+                'Host': `wxxcx.dairyqueen.com.cn`,
+                'User-Agent': `Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f37) NetType/WIFI Language/zh_CN`
+            },
+            type: 'post',
+            dataType: "json",
+            body: { "content": {} }
+        }
+        let res = await fetch(opts);
+        if (res?.status == 2) throw new Error(res?.msg || "用户需要去登录");
+        return res?.data;
+    } catch (e) {
+        $.ckStatus = false;
+        $.log(`⛔️ 获取雪沥用户信息失败！${e}\n`)
+    }
+}
+
 //登录
 async function Login(user, sign) {
     try {
@@ -124,9 +157,23 @@ async function Login(user, sign) {
             url: "/candaoAppLogin",
             type: 'post',
             dataType: "json",
+            resultType: "all",
+            headers: {
+                'Cookie': user.token,
+                'tenant': 1,
+                'channel': `202`,
+                'User-Agent': `Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f37) NetType/WIFI Language/zh_CN`,
+            },
             body: { "type": "candao", "sign": sign, "bindingAccount": user.phone, "tenantId": 1, "channelId": 311, "timestamp": $.timestamp, "unionId": user.unionId, "openId": user.openId }
         }
         let res = await fetch(opts);
+        let headers = ObjectKeys2LowerCase(res.headers);
+        //对青龙进行兼容
+        let session = Array.isArray(headers['set-cookie']) ? headers['set-cookie'].join("") : headers['set-cookie'];
+        let [token,] = session.match(/SESSION=.+?;/g);
+        debug(token);
+        _headers.Cookie = token;
+        res = $.toObj(res?.body, res?.body);
         if (res?.code != 200) throw new Error(res?.message);
         $.log(`✅ ${user.phone}登录成功!`)
     } catch (e) {
@@ -149,6 +196,7 @@ async function signin(item) {
         $.log(`⛔️ ${item.name}签到失败！${e}\n`)
     }
 }
+
 //查询用户信息
 async function getUserInfo() {
     try {
@@ -158,10 +206,13 @@ async function getUserInfo() {
         $.log(`⛔️ 查询用户信息失败！${e}\n`)
     }
 }
+//
+
+
 //获取Cookie
 async function getCookie() {
     try {
-        if ($request && $request.method === 'OPTIONS') throw new Error("Incorrect script execution method,only cron is permitted");
+        if ($request && $request.method === 'OPTIONS') return;
 
         const header = ObjectKeys2LowerCase($request.headers);
         const body = $.toObj($request.body);
@@ -195,9 +246,71 @@ async function getCookie() {
     }
 }
 
+
+async function getXueLiUserList() {
+    await getWxCode();
+    for (let code of $.codeList) {
+        let { token, unionId, openId } = await getToken(code);
+        let { phone } = await getXueLiUser(token);
+        let user = { phone, token, unionId, openId };
+        debug(user)
+        userCookie.push(user)
+    }
+}
+
+//获取登录token
+async function getToken(code) {
+    try {
+        const opts = {
+            url: "https://wxxcx.dairyqueen.com.cn/LocalAction",
+            params: { "_actionName": "openid", method: "getOpenId", "code": code, key: "30274185e983a6c6", memberType: 1 },
+            resultType: "all",
+            headers: {
+                'Referer': `https://servicewechat.com/wx22e5ce7c766b4b78/134/page-frame.html`,
+                'Connection': `keep-alive`,
+                'Cookie': "",
+                'Host': `wxxcx.dairyqueen.com.cn`,
+                'content-type': `application/json`,
+                'Accept-Encoding': `gzip,compress,br,deflate`,
+                'User-Agent': `Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f37) NetType/WIFI Language/zh_CN`
+            }
+        }
+        let res = await fetch(opts);
+        let headers = ObjectKeys2LowerCase(res.headers);
+        //对青龙进行兼容
+        let session = Array.isArray(headers['set-cookie']) ? headers['set-cookie'].join("") : headers['set-cookie'];
+        let [token,] = session.match(/JSESSIONID=.+?;/g);
+        debug(token);
+        res = $.toObj(res?.body, res?.body);
+        if (res?.status == 2) throw new Error(res?.msg || "用户需要去登录");
+        return { token: token, unionId: res?.data?.unionid, openId: res?.data?.openid };
+    } catch (e) {
+        $.ckStatus = false;
+        $.log(`⛔️ 获取雪沥Sign失败！${e}\n`)
+    }
+}
+
+// 获取微信 Code
+async function getWxCode() {
+    try {
+        $.codeList = [];
+        $.codeServer = ($.isNode() ? process.env["CODESERVER_ADDRESS"] : $.getdata("@codeServer.address")) || '';
+        $.codeFuc = ($.isNode() ? process.env["CODESERVER_FUN"] : $.getdata("@codeServer.fun")) || '';
+        if (!$.codeServer) return $.log(`⚠️ 未配置微信 Code Server。`);
+
+        $.codeList = ($.codeFuc
+            ? (eval($.codeFuc), await WxCode($.appid))
+            : (await Request(`${$.codeServer}/?wxappid=${$.appid}`))?.split("|"))
+            .filter(item => item.length === 32);
+        $.log(`♻️ 获取到 ${$.codeList.length} 个微信 Code`);
+        debug($.codeList);
+    } catch (e) {
+        $.logErr(`❌ 获取微信 Code 失败！`);
+    }
+}
+
 //13位时间戳
 function ts13() { return Math.round(new Date().getTime()).toString(); }
-
 
 //主程序执行入口
 !(async () => {
