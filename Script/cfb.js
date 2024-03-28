@@ -1,7 +1,7 @@
 /*
 ------------------------------------------
 @Author: Sliverkiss
-@Date: 2024-03-28 18:47:18
+@Date: 2024-03-24 10:20:18
 @Description: CFB Group旗下小程序签到：适用于DQ、棒约翰、Brut Eatery、小金玡居
 ------------------------------------------
 
@@ -32,7 +32,7 @@ const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName),
 //notify
 $.notifyMsg = []
 //debug
-$.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
+$.is_debug = $.toObj(($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false');
 $.doFlag = { "true": "✅", "false": "⛔️" };
 
 //------------------------------------------
@@ -61,12 +61,12 @@ async function main() {
         await getXueLiUserList();
         //check accounts
         if (!userCookie?.length) throw new Error("no available accounts found");
-        $.log(`⚙️ a total of ${userCookie?.length ?? 0} accounts were identified during this operation.\n`);
+        $.log(`⚙️ a total of ${userCookie?.length ?? 0} accounts were identified during this operation.`);
         let index = 0;
         //doTask of userList
         for (let user of userCookie) {
             //init of user
-            $.log(`🚀 user:${user?.userName || ++index} start work`),
+            $.log(`\n🚀 user:${user?.userName || ++index} start work\n`),
                 $.notifyMsg = [],
                 $.ckStatus = true,
                 $.title = "",
@@ -175,7 +175,7 @@ async function Login(user, sign) {
         _headers.Cookie = token;
         res = $.toObj(res?.body, res?.body);
         if (res?.code != 200) throw new Error(res?.message);
-        $.log(`✅ ${user.phone}登录成功!`)
+        $.log(`✅ ${user.phone}登录成功!\n`)
     } catch (e) {
         $.ckStatus = false;
         $.log(`⛔️ ${user?.phone}登录失败！${e}\n`)
@@ -246,15 +246,18 @@ async function getCookie() {
     }
 }
 
-
 async function getXueLiUserList() {
-    await getWxCode();
-    for (let code of $.codeList) {
-        let { token, unionId, openId } = await getToken(code);
-        let { phone } = await getXueLiUser(token);
-        let user = { phone, token, unionId, openId };
-        debug(user)
-        userCookie.push(user)
+    try {
+        await getWxCode();
+        for (let code of $.codeList) {
+            let { token, unionId, openId } = await getToken(code) ?? {};
+            let { phone } = await getXueLiUser(token) ?? {};
+            let user = { phone, token, unionId, openId };
+            debug(user)
+            userCookie.push(user)
+        }
+    } catch (e) {
+        $.logErr(e);
     }
 }
 
@@ -302,7 +305,7 @@ async function getWxCode() {
             ? (eval($.codeFuc), await WxCode($.appid))
             : (await Request(`${$.codeServer}/?wxappid=${$.appid}`))?.split("|"))
             .filter(item => item.length === 32);
-        $.log(`♻️ 获取到 ${$.codeList.length} 个微信 Code`);
+        $.log(`♻️ 获取到 ${$.codeList.length} 个微信 Code\n`);
         debug($.codeList);
     } catch (e) {
         $.logErr(`❌ 获取微信 Code 失败！`);
