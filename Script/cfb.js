@@ -1,7 +1,7 @@
 /*
 ------------------------------------------
 @Author: Sliverkiss
-@Date: 2024-03-28 19:08:18
+@Date: 2024-03-28 19:12:18
 @Description: CFB Group旗下小程序签到：适用于DQ、棒约翰、Brut Eatery、小金玡居
 ------------------------------------------
 
@@ -30,6 +30,7 @@ const ckName = "cfb_data";
 $.appid = 'wx22e5ce7c766b4b78';  // 小程序 appId
 const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName), []);
 //notify
+const notify = $.isNode() ? require('./sendNotify') : '';
 $.notifyMsg = []
 //debug
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
