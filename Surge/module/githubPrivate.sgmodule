@@ -1,7 +1,9 @@
 #!name=Github Private
-#!desc=允许引用Github私有仓库/gist中的订阅分流，重写，脚本等配置文件。
-#!arguments=username,token
-#!arguments-desc=username: 填入github的用户名\ntoken: 填入github生成的token
+#!desc=允许引用Github私有仓库/Gist中的订阅分流,重写,脚本等配置文件;
+#!category=Third-party module
+#!arguments=username:GITHUB_USERNAME,token:GITHUB_TOKEN
+#!arguments-desc=[参数设置]\nusername: 填入GitHub的用户名\ntoken: 填入GitHub生成的Token\n\n[Token获取方式]\n头像菜单 -> Settings -> Developer settings -> Personal access tokens -> Generate new token -> 在权限列表中找到并勾选 gist 然后提交生成
+
 [Header Rewrite]
 http-request ^https?:\/\/(raw|gist)\.githubusercontent\.com\/{{{username}}} header-del Authorization
 http-request ^https?:\/\/(raw|gist)\.githubusercontent\.com\/{{{username}}} header-add Authorization "token {{{token}}}"
