@@ -26,7 +26,6 @@ $.info(`从持久化存储读取参数后: ${$.toStr(arg)}`)
         name,
         data: { title, subtitle, body },
     } = $event
-    body = subtitle ? `${subtitle}\n${body}` : body
     barkBody = barkBody ?? `${title ?? ''}\n${subtitle ?? ''}\n${body ?? ''}`
     await http({
         method: 'get',
