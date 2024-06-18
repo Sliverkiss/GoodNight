@@ -1,5 +1,3 @@
-const BARK_TOKEN = 'X6NGZEReWijSGRiVMmcvwj'
-
 const NAMESPACE = '通知'
 let $ = new Env(NAMESPACE, {
     logLevel: 'info',
@@ -26,10 +24,10 @@ $.info(`从持久化存储读取参数后: ${$.toStr(arg)}`)
         name,
         data: { title, subtitle, body },
     } = $event
-    barkBody = barkBody ?? `${title ?? ''}\n${subtitle ?? ''}\n${body ?? ''}`
+    barkBody = barkBody ?? `${subtitle ?? ''}\n${body ?? ''}`
     await http({
         method: 'get',
-        url: `https://api.day.app/${BARK_TOKEN}/${encodeURIComponent(title)}/${encodeURIComponent(
+        url: `https://api.day.app/${arg.BARK_TOKEN}/${encodeURIComponent(title)}/${encodeURIComponent(
             barkBody
         )}?group=Surge&autoCopy=1&isArchive=1&icon=https%3A%2F%2Fraw.githubusercontent.com%2Fxream%2Fscripts%2Fmain%2Fscriptable%2Fsurge%2Fsurge-dark.png&sound=shake&level=timeSensitive`,
     })
