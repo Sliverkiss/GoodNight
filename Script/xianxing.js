@@ -66,7 +66,7 @@ async function main() {
     $.info(`限行区域: ${limitLocal}`);
     $.info(`限行规则: ${limitRule}`);
 
-    return { title: `${title}信息 ${data.loo}`, content: `今日限行: ${todayDate} ${todayRule}\n明日限行: ${tomorrowDate} ${tomorrowRule}\n限行时间: ${limitTime}\n限行区域: ${limitLocal}`, icon: `car` }
+    return { title: `${title}信息 ${data.loo}`, content: `今日限行: ${todayDate} ${todayRule}\n明日限行: ${tomorrowDate} ${tomorrowRule}\n\n${limitTime}\n\n${limitLocal}`, icon: `car` }
 }
 
 
@@ -82,6 +82,7 @@ async function main() {
     .catch(async e => {
         $.error(`❌ ${e.message || e}`)
         $.error(e)
+        $.done({title:"车辆限行信息",content:"未获取到相应信息，请检查配置是否正确",icon:"car"})
     })
     .finally(async () => {
     })
