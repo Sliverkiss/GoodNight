@@ -56,6 +56,8 @@ async function main() {
 
         // 获取限行时间信息
         const limitTime = limitDetail.find('.limit-time .cicle-text').text().trim();
+        limit.length
+
 
         // 获取限行区域信息
         const limitLocal = limitDetail.find('.limit-local .cicle-text').text().trim();
@@ -66,8 +68,13 @@ async function main() {
         $.info(`限行时间: ${limitTime}`);
         $.info(`限行区域: ${limitLocal}`);
         $.info(`限行规则: ${limitRule}`);
+        let content = "";
+        if (todayDate || todayRule) content += `今日限行: ${todayDate} ${todayRule}\n`;
+        if (tomorrowDate || tomorrowRule) content += `明日限行: ${tomorrowDate} ${tomorrowRule}\n\n`;
+        if (limitTime) content += `限行时间: ${limitTime}\n`
+        if (limitLocal) content += `限行区域: ${limitLocal.length >= 100 ? "详情请前往本地宝浏览" : limitLocal}`
 
-        return { title: `${title}信息 ${decodeURIComponent(data.cartype)} ${data.loo}`, content: `今日限行: ${todayDate} ${todayRule}\n明日限行: ${tomorrowDate} ${tomorrowRule}\n\n${limitTime}\n\n${limitLocal}`, icon: `car` }
+        return { title: `${title}信息 ${decodeURIComponent(data.cartype)} ${decodeURIComponent(data.loo)}`, content: content, icon: `car` }
     } catch (e) {
         throw e;
     }
