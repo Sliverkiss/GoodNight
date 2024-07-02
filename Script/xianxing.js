@@ -69,8 +69,8 @@ async function main() {
         let content = "";
         if (todayDate || todayRule) content += `今日限行: ${todayDate} ${todayRule}\n`;
         if (tomorrowDate || tomorrowRule) content += `明日限行: ${tomorrowDate} ${tomorrowRule}\n\n`;
-        if (limitTime) content += `限行时间: ${limitTime}\n`
-        if (limitLocal) content += `限行区域: ${limitLocal.length >= 100 ? "详情请前往本地宝浏览" : limitLocal}`
+        if (limitTime) content += `限行时间: ${limitTime}\n\n`
+        if (limitLocal) content += `限行区域: ${limitLocal.length >= 100 ? "详细限行规则请前往本地宝查看" : limitLocal}`
 
         return { title: `${title}信息 ${decodeURIComponent(data.cartype)} ${decodeURIComponent(data.loo)}`, content: content, icon: `car` }
     } catch (e) {
