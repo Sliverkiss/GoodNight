@@ -75,15 +75,16 @@ async function main() {
 !(async () => {
     $.info(`🔔 ${new Date().toLocaleString()}`)
     $.info(JSON.stringify(getData()));
-    var car = await main();
+    $.car = await main();
     $.info(JSON.stringify(car));
+    $.done({…car})
 })()
     .catch(async e => {
         $.error(`❌ ${e.message || e}`)
         $.error(e)
     })
     .finally(async () => {
-        $done(car)
+        $.done({…$.car})
     })
 
 //定义一个方法，用于获取监控网站的数据
