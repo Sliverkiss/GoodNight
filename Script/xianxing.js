@@ -56,8 +56,6 @@ async function main() {
 
         // 获取限行时间信息
         const limitTime = limitDetail.find('.limit-time .cicle-text').text().trim();
-        limit.length
-
 
         // 获取限行区域信息
         const limitLocal = limitDetail.find('.limit-local .cicle-text').text().trim();
