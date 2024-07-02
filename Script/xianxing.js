@@ -76,7 +76,7 @@ async function main() {
     $.info(`🔔 ${new Date().toLocaleString()}`)
     $.info(JSON.stringify(getData()));
     const {title,content,icon} = await main();
-    $.info(JSON.stringify(car));
+    //$.info(JSON.stringify(car));
     $.done({title,content,icon})
 })()
     .catch(async e => {
