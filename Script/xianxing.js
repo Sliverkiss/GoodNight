@@ -98,13 +98,13 @@ async function getHtml(url) {
     return html;
 }
 
+
 function getData() {
     try {
         //传入参数：city、cartype、loo
         let quires = getArgs();
         quires.cartype = encodeURIComponent(quires.cartype);
         quires.loo = encodeURIComponent(quires.loo);
-        quires.displayxxregion = JSON.parse(quires.displayxxregion)
         quires.url = quires.city == 'sz'
             ? 'http://m.bendibao.com/news/xianxingchaxun/'
             : `http://m.${quires.city}.bendibao.com/news/xianxingchaxun/index.php?category=${quires.cartype}&loo=${quires.loo}`;
