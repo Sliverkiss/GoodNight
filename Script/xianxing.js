@@ -1,5 +1,3 @@
-
-
 /*
 #!name=限行查询
 #!desc=车辆限行信息
@@ -11,7 +9,7 @@
 
 [Script]
 # Panel
-xianxing = type=generic, script-path=https://raw.githubusercontent.com/chengkongyiban/Surge/main/js/xianxing.js, timeout=60, argument=city=bj&cartype=燃油车&loo=本地车&displayxxregion=false
+xianxing = type=generic, script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/xianxing.js, timeout=60
 
 */
 
