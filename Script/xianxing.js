@@ -1,15 +1,15 @@
 /*
 #!name=限行查询
 #!desc=车辆限行信息
-
-#city缩写可前往 http://m.xy.bendibao.com/news/xianxingchaxun/city.php 查看
+#!arguments="city:cd,loo:本地车,cartype:燃油车"
+#!arguments-desc="loo:填写本地车或者外地车\ncartype:填写汽车种类，如燃油车\ncity缩写可前往 http://m.xy.bendibao.com/news/xianxingchaxun/city.php 查看"
 
 [Panel]
 车辆限行Panel = script-name=xianxing, update-interval=3600
 
 [Script]
 # Panel
-xianxing = type=generic, script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/xianxing.js, timeout=60
+xianxing = type=generic, script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/xianxing.js, timeout=60,argument=city={{{city}}}&loo={{{loo}}}&cartype={{{cartype}}}
 
 */
 
@@ -18,55 +18,60 @@ let $ = new Env(NAMESPACE, {
     logLevel: 'info',
     log() { },
 })
-//获取数据
-let data = getData();
 
 //定义一个main方法，用于处理所有的脚本逻辑
 async function main() {
-    //加载模块
-    $.Cheerio = await loadCheerio();
-    //获取网页
-    let html = await getHtml(data.url);
-    // 将 HTML 内容加载到 Cheerio
-    const query = $.Cheerio.load(html);
-    // 提取标题内容
-    const title = query('.title-name.font').text().trim();
-    // 输出提取的标题
-    $.info(title);  // 输出: 成都限行   
-    const limitList = query('.limit-list').first();
+    try {
+        //获取数据
+        let data = getData();
+        //加载模块
+        $.Cheerio = await loadCheerio();
+        //获取网页
+        let html = await getHtml(data.url);
+        // 将 HTML 内容加载到 Cheerio
+        const query = $.Cheerio.load(html);
+        // 提取标题内容
+        const title = query('.title-name.font').text().trim();
+        // 输出提取的标题
+        $.info(title);  // 输出: 成都限行   
+        const limitList = query('.limit-list').first();
 
-    const today = limitList.find('.today');
-    const tomorrow = limitList.find('.tomorrow');
+        const today = limitList.find('.today');
+        const tomorrow = limitList.find('.tomorrow');
 
-    const todayDate = today.find('.date').text().trim();
-    const todayRule = today.find('.rule').text().trim();
+        const todayDate = today.find('.date').text().trim();
+        const todayRule = today.find('.rule').text().trim();
 
-    const tomorrowDate = tomorrow.find('.date').text().trim();
-    const tomorrowRule = tomorrow.find('.rule').text().trim();
+        const tomorrowDate = tomorrow.find('.date').text().trim();
+        const tomorrowRule = tomorrow.find('.rule').text().trim();
 
-    $.info(`日期: ${todayDate}`);
-    $.info(`规则: ${todayRule}`);
+        $.info(`日期: ${todayDate}`);
+        $.info(`规则: ${todayRule}`);
 
-    $.info(`日期: ${tomorrowDate}`);
-    $.info(`规则: ${tomorrowRule}`);
+        $.info(`日期: ${tomorrowDate}`);
+        $.info(`规则: ${tomorrowRule}`);
 
-    // 获取限行详细信息
-    const limitDetail = query('.limit-detail.xianxin').first();
+        // 获取限行详细信息
+        const limitDetail = query('.limit-detail.xianxin').first();
 
-    // 获取限行时间信息
-    const limitTime = limitDetail.find('.limit-time .cicle-text').text().trim();
+        // 获取限行时间信息
+        const limitTime = limitDetail.find('.limit-time .cicle-text').text().trim();
 
-    // 获取限行区域信息
-    const limitLocal = limitDetail.find('.limit-local .cicle-text').text().trim();
+        // 获取限行区域信息
+        const limitLocal = limitDetail.find('.limit-local .cicle-text').text().trim();
 
-    // 获取限行规则信息
-    const limitRule = limitDetail.find('.limit-rule .cicle-text').text().trim();
+        // 获取限行规则信息
+        const limitRule = limitDetail.find('.limit-rule .cicle-text').text().trim();
 
-    $.info(`限行时间: ${limitTime}`);
-    $.info(`限行区域: ${limitLocal}`);
-    $.info(`限行规则: ${limitRule}`);
+        $.info(`限行时间: ${limitTime}`);
+        $.info(`限行区域: ${limitLocal}`);
+        $.info(`限行规则: ${limitRule}`);
 
-    return { title: `${title}信息 ${data.loo}`, content: `今日限行: ${todayDate} ${todayRule}\n明日限行: ${tomorrowDate} ${tomorrowRule}\n\n${limitTime}\n\n${limitLocal}`, icon: `car` }
+        return { title: `${title}信息 ${decodeURIComponent(data.cartype)} ${data.loo}`, content: `今日限行: ${todayDate} ${todayRule}\n明日限行: ${tomorrowDate} ${tomorrowRule}\n\n${limitTime}\n\n${limitLocal}`, icon: `car` }
+    } catch (e) {
+        throw e;
+    }
+
 }
 
 
@@ -74,15 +79,15 @@ async function main() {
 //主程序执行入口
 !(async () => {
     $.info(`🔔 ${new Date().toLocaleString()}`)
-    $.info(JSON.stringify(getData()));
-    const {title,content,icon} = await main();
+    const { title, content, icon } = await main();
     //$.info(JSON.stringify(car));
-    $.done({title,content,icon})
+    $.done({ title, content, icon })
 })()
     .catch(async e => {
         $.error(`❌ ${e.message || e}`)
         $.error(e)
-        $.done({title:"车辆限行信息",content:"未获取到相应信息，请检查配置是否正确",icon:"car"})
+        $.msg($.name, `❌ ${e.message || e}`, "");
+        $.done({ title: "车辆限行信息", content: "未获取到相应信息，请检查配置是否正确", icon: "car" })
     })
     .finally(async () => {
     })
@@ -93,21 +98,20 @@ async function getHtml(url) {
     return html;
 }
 
-
 function getData() {
-    //传入参数：city、cartype、loo
-    let quires = getArgs({
-        city: 'cd',
-        cartype: encodeURIComponent('燃油车'),
-        loo: '本地车',
-        displayxxregion: false
-    });
-    quires.cartype = encodeURIComponent(quires.cartype);
-    quires.displayxxregion = JSON.parse(quires.displayxxregion)
-    quires.url = quires.city == 'sz'
-        ? 'http://m.bendibao.com/news/xianxingchaxun/'
-        : `http://m.${quires.city}.bendibao.com/news/xianxingchaxun/index.php?category=${quires.cartype}`;
-    return quires;
+    try {
+        //传入参数：city、cartype、loo
+        let quires = getArgs();
+        quires.cartype = encodeURIComponent(quires.cartype);
+        quires.loo = encodeURIComponent(quires.loo);
+        quires.displayxxregion = JSON.parse(quires.displayxxregion)
+        quires.url = quires.city == 'sz'
+            ? 'http://m.bendibao.com/news/xianxingchaxun/'
+            : `http://m.${quires.city}.bendibao.com/news/xianxingchaxun/index.php?category=${quires.cartype}&loo=${quires.loo}`;
+        return quires;
+    } catch (e) {
+        throw e;
+    }
 }
 
 //加载cheerio
