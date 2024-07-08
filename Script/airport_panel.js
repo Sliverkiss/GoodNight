@@ -3,8 +3,6 @@
 #!desc=与机场面板配套使用，自动生成相应面板配置
 #!system=ios
 #!category=fizz
-#!arguments=count
-#!arguments-desc=[参数设置]\n\n⓵ count: 填写你要获取的机场面板个数
 
 [Script]
 生成模块配置 = type=http-request, pattern=^https:\/\/airport\.rewrite, script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/airport_panel.js, requires-body=true, max-size=-1, timeout=60
@@ -30,16 +28,7 @@ $.web = ``
 async function handleOptions() { }
 //处理`页面`请求
 async function handlePage() {
-    let data = getArgs();
-    $.html = getPanel($.queries.count || data.count);
-    function getArgs() {
-        return Object.fromEntries(
-            $argument
-                .split("&")
-                .map((item) => item.split("="))
-                .map(([k, v]) => [k, decodeURIComponent(v)])
-        );
-    }
+    $.html = getPanel($.queries.count);
 }
 //处理`查询`请求
 async function handleQuery() {
