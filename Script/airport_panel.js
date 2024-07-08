@@ -5,7 +5,7 @@
 #!category=fizz
 
 [Script]
-生成模块配置 = type=http-response,pattern=^https:\/\/ys\.shajixueyuan\.com\/api\/user\/info,script-path=,requires-body=0,max-size=0
+生成模块配置 = type=http-response,pattern=^https:\/\/ys\.shajixueyuan\.com\/api\/user\/info,script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/airport_panel.js,requires-body=0,max-size=0
 
 [Mitm]
 hostname= %APPEND% pannel.airport.rewrite
