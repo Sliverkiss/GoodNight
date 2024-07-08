@@ -28,7 +28,7 @@ $.web = ``
 async function handleOptions() { }
 //处理`页面`请求
 async function handlePage() {
-    return getPanel($.queries.count);
+    $.html=getPanel($.queries.count);
 }
 //处理`查询`请求
 async function handleQuery() {
