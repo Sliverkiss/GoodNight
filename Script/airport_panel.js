@@ -31,8 +31,15 @@ async function handleOptions() { }
 //处理`页面`请求
 async function handlePage() {
     let data = getArgs();
-    $.html = getPanel($.queries.count||data.count);
-    function getArgs(t = {}) { let e; return e = "undefined" != typeof $argument ? Object.fromEntries($argument.split("&").map((t => t.split("=")))) : {}, e }
+    $.html = getPanel($.queries.count || data.count);
+    function getArgs() {
+        return Object.fromEntries(
+            $argument
+                .split("&")
+                .map((item) => item.split("="))
+                .map(([k, v]) => [k, decodeURIComponent(v)])
+        );
+    }
 }
 //处理`查询`请求
 async function handleQuery() {
