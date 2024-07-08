@@ -4,6 +4,7 @@
 #!system=ios
 #!category=fizz
 
+
 [Script]
 生成模块配置 = type=http-request, pattern=^https:\/\/airport\.rewrite, script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/airport_panel.js, requires-body=true, max-size=-1, timeout=60
 
