@@ -2,7 +2,7 @@
 美团获取token
 
 [Script]
-http-request ^https:\/\/i.meituan.com\/evolve\/signin\/signpost\/ script-path=, timeout=10, tag=美团获取token
+http-request ^https:\/\/i.meituan.com\/evolve\/signin\/signpost\/ script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/meituan.js, timeout=10, tag=美团获取token
 
 [MITM]
 hostname =i.meituan.com
