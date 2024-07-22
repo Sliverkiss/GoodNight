@@ -15,7 +15,8 @@ $.barkKey = $.getdata('bark_key') || "";
 !(async () => {
     //没有设置变量,执行Cookie获取
     if (typeof $request != 'undefined') {
-        let token = ObjectKeys2LowerCase($request.headers);
+        let _headers = ObjectKeys2LowerCase($request.headers);
+        let token=_headers;
         if ($.barkKey) {
             //如果已填写Bark Key
             await BarkNotify($, $.barkKey, $.name, `🎉捕获token成功！${token}`); //推送Bark通知
