@@ -52,9 +52,10 @@ function exchange(opts) {
 function getCookie() {
     try {
         const url = $request?.url;
+        const headers = $request?.headers
         const method = $request?.method?.toLocaleLowerCase();
         const body = $request?.body;
-        let opts = { url, method, body }
+        let opts = { url, headers, method, body }
         $.setjson(opts, `@sliverkiss.record.${$.ckName}.opts`);
         let result = url && method ? "✅ create/update record data success!" : "❌ create/update record data error!"
         $.msg($.name, result, ` ├ url: ${opts?.url} \n ├ method: ${opts?.method} \n └ body: ${opts?.body} `);
