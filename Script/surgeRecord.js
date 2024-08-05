@@ -44,7 +44,7 @@ function exchange(opts) {
     try {
         return new Promise((resolve) => {
             $[opts?.method](opts, (err, resp, data) => {
-                resolve(getValueByPath(data, $.arguments?.path) ?? data);
+                resolve(getValueByPath(data, $.arguments?.path || "") ?? data);
             });
         });
     } catch (e) {
@@ -53,11 +53,12 @@ function exchange(opts) {
 }
 //获取对象子路径
 function getValueByPath(res, path) {
+    if (!path) return res;
     // 将路径字符串按 "." 拆分成数组
-    const keys = path.replace(/\[(\d+)\]/g, '.$1').split('.');
+    const keys = path?.replace(/\[(\d+)\]/g, '.$1').split('.');
 
     // 遍历路径数组逐层访问对象的属性
-    return keys.reduce((acc, key) => {
+    return keys?.reduce((acc, key) => {
         return acc && acc[key] !== undefined ? acc[key] : undefined;
     }, res) || res;
 }
