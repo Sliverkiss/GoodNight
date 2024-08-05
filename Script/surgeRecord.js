@@ -4,6 +4,7 @@ const $ = new Env(moduleName);
 $.arguments = getArguments();
 $.name = $.arguments?.scriptName || moduleName;
 $.ckName = $.arguments?.ckName || "default";
+
 //主程序执行入口
 !(async () => {
     try {
@@ -20,6 +21,7 @@ $.ckName = $.arguments?.ckName || "default";
     .finally(async () => {
         $.done({ ok: 1 });
     });
+    
 //主函数
 async function main() {
     try {
@@ -41,12 +43,22 @@ function exchange(opts) {
     try {
         return new Promise((resolve) => {
             $[opts?.method](opts, (err, resp, data) => {
-                resolve(data);
+                resolve(getValueByPath(data, $.arguments?.path) ?? data);
             });
         });
     } catch (e) {
         throw e;
     }
+}
+//获取对象子路径
+function getValueByPath(res, path) {
+    // 将路径字符串按 "." 拆分成数组
+    const keys = path.replace(/\[(\d+)\]/g, '.$1').split('.');
+
+    // 遍历路径数组逐层访问对象的属性
+    return keys.reduce((acc, key) => {
+        return acc && acc[key] !== undefined ? acc[key] : undefined;
+    }, res) || res;
 }
 
 function getCookie() {
