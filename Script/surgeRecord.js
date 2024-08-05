@@ -2,14 +2,15 @@ const moduleName = "Surge通用重放脚本";
 const $ = new Env(moduleName);
 //获取参数
 $.arguments = getArguments();
-$.name = $.arguments?.scriptName || moduleName;
-$.ckName = $.arguments?.ckName || "default";
+$.name = $.arguments?.scriptName || moduleName;//脚本名
+$.ckName = $.arguments?.ckName || "default";//变量名
+$.isGetCookie = $.arguments?.isGetCookie || "1"//是否打开获取cookie
 
 //主程序执行入口
 !(async () => {
     try {
         if (typeof $request != "undefined") {
-            await getCookie();
+            if ($.isGetCookie != "0") await getCookie();
         } else {
             await main();
         }
@@ -21,7 +22,7 @@ $.ckName = $.arguments?.ckName || "default";
     .finally(async () => {
         $.done({ ok: 1 });
     });
-    
+
 //主函数
 async function main() {
     try {
