@@ -3,6 +3,7 @@ const $ = new Env(moduleName);
 //获取参数
 $.arguments = getArguments();
 $.name = $.arguments?.scriptName || moduleName;
+$.ckName = $.arguments?.$.ckName || "default";
 //主程序执行入口
 !(async () => {
     try {
