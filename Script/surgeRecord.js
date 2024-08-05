@@ -5,7 +5,6 @@ $.arguments = getArguments();
 $.name = $.arguments?.scriptName || moduleName;//脚本名
 $.ckName = $.arguments?.ckName || "default";//变量名
 $.isGetCookie = $.arguments?.isGetCookie || "1"//是否打开获取cookie
-
 //主程序执行入口
 !(async () => {
     try {
@@ -44,6 +43,7 @@ function exchange(opts) {
     try {
         return new Promise((resolve) => {
             $[opts?.method](opts, (err, resp, data) => {
+                data = $.toObj(data) || data;
                 resolve(getValueByPath(data, $.arguments?.path || "") ?? data);
             });
         });
