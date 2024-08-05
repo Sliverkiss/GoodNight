@@ -43,8 +43,8 @@ function exchange(opts) {
     try {
         return new Promise((resolve) => {
             $[opts?.method](opts, (err, resp, data) => {
-                data = $.toObj(data) || data;
-                resolve(getValueByPath(data, $.arguments?.path || "") ?? data);
+                let res = $.toObj(data) || data;
+                resolve(getValueByPath(res, $.arguments?.path || "") ?? res);
             });
         });
     } catch (e) {
