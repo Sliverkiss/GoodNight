@@ -2,7 +2,7 @@ const moduleName = "Surge通用重放脚本";
 const $ = new Env(moduleName);
 //获取参数
 $.arguments = getArguments();
-$.name = $.arguments?.name || moduleName;
+$.name = $.arguments?.scriptName || moduleName;
 //主程序执行入口
 !(async () => {
     try {
@@ -22,7 +22,7 @@ $.name = $.arguments?.name || moduleName;
 //主函数
 async function main() {
     try {
-        if ($.arguments.opts) {
+        if ($.arguments?.opts?.url) {
             let res = await exchange($.arguments.opts);
             res ?
                 $.msg($.name, "✅ retry record data success!", ` └ result: ${$.toStr(res)}`)
