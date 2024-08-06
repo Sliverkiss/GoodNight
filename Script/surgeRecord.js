@@ -5,6 +5,9 @@ $.arguments = getArguments();
 $.name = $.arguments?.scriptName || moduleName;//脚本名
 $.ckName = $.arguments?.ckName || "default";//变量名
 $.isGetCookie = $.arguments?.isGetCookie || "1"//是否打开获取cookie
+$.retry = parseInt($.arguments?.retry) || 1;//重放次数
+$.sleep = parseInt($.arguments?.sleep) || 0;//重放间隔,单位为ms
+
 //主程序执行入口
 !(async () => {
     try {
@@ -26,10 +29,18 @@ $.isGetCookie = $.arguments?.isGetCookie || "1"//是否打开获取cookie
 async function main() {
     try {
         if ($.arguments?.opts?.url) {
-            let res = await exchange($.arguments.opts);
-            res ?
-                $.msg($.name, "✅ retry record data success!", ` └ result: ${$.toStr(res)}`)
-                : $.msg($.name, "⛔️ retry record data error!", ` └ result: ${$.toStr(res)}`)
+            if ($.retry <= 1) {
+                let res = await exchange($.arguments.opts);
+                res ?
+                    $.msg($.name, "✅ retry record data success!", ` └ result: ${$.toStr(res)}`)
+                    : $.msg($.name, "⛔️ retry record data error!", ` └ result: ${$.toStr(res)}`)
+            } else {
+                for (let i = 1; i <= $.retry; i++) {
+                    await exchange($.arguments.opts);
+                    if ($.sleep >= 0) await $.wait(parseInt($.sleep));
+                }
+                $.msg($.name, "✅ retry record data success!", ` └ retryCount: ${$.retry}`)
+            }
         } else {
             throw new Error("opts参数缺失，请先设置模块参数");
         }
@@ -44,23 +55,24 @@ function exchange(opts) {
         return new Promise((resolve) => {
             $[opts?.method](opts, (err, resp, data) => {
                 let res = $.toObj(data) || data;
-                resolve(getValueByPath(res, $.arguments?.path || "") ?? res);
+                $.info($.toStr(res));
+                resolve(executeCode(res, $.arguments?.path || "") ?? res);
             });
         });
     } catch (e) {
         throw e;
     }
 }
-//获取对象子路径
-function getValueByPath(res, path) {
-    if (!path) return res;
-    // 将路径字符串按 "." 拆分成数组
-    const keys = path?.replace(/\[(\d+)\]/g, '.$1').split('.');
 
-    // 遍历路径数组逐层访问对象的属性
-    return keys?.reduce((acc, key) => {
-        return acc && acc[key] !== undefined ? acc[key] : undefined;
-    }, res) || res;
+//执行传入代码
+function executeCode(res, codeString) {
+    try {
+        // 创建一个新的函数并执行
+        const func = new Function('res', `return ${codeString ?? res};`);
+        return func(res);
+    } catch (e) {
+        return res;
+    }
 }
 
 function getCookie() {
