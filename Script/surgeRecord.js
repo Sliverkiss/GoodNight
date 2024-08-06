@@ -42,7 +42,7 @@ async function main() {
                     if ($.sleep >= 0) await $.wait(parseInt($.sleep));
                 }
                 result = uniqueObjects(result);
-                let message = result.map((item, index) => ` ├ tree${index}:${item}`).join("\n");
+                let message = result.map((item, index) => ` ├ tree${index+1}:${item}`).join("\n");
                 $.msg($.name, "✅ retry record data success!", `${message}\n └ retryCount: ${$.retry}`)
             }
         } else {
