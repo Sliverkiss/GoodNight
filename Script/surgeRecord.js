@@ -35,11 +35,15 @@ async function main() {
                     $.msg($.name, "✅ retry record data success!", ` └ result: ${$.toStr(res)}`)
                     : $.msg($.name, "⛔️ retry record data error!", ` └ result: ${$.toStr(res)}`)
             } else {
+                let result = [];
                 for (let i = 1; i <= $.retry; i++) {
-                    await exchange($.arguments.opts);
+                    let res = await exchange($.arguments.opts);
+                    result.push(res);
                     if ($.sleep >= 0) await $.wait(parseInt($.sleep));
                 }
-                $.msg($.name, "✅ retry record data success!", ` └ retryCount: ${$.retry}`)
+                result = uniqueObjects(result);
+                let message = result.map((item, index) => ` ├ tree${index}:${item}`).join("\n");
+                $.msg($.name, "✅ retry record data success!", `${message}\n └ retryCount: ${$.retry}`)
             }
         } else {
             throw new Error("opts参数缺失，请先设置模块参数");
@@ -88,6 +92,23 @@ function getCookie() {
     } catch (e) {
         throw e;
     }
+}
+
+/**
+ * 去重完全相同的对象
+ * @param {Object[]} array - 要去重的对象数组
+ * @returns {Object[]} - 去重后的数组
+ */
+function uniqueObjects(array) {
+    const seen = new Set();
+    return array.filter(item => {
+        const key = JSON.stringify(item);
+        if (seen.has(key)) {
+            return false;
+        }
+        seen.add(key);
+        return true;
+    });
 }
 
 //封装一个获取Surge参数的方法
