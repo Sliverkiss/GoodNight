@@ -7,6 +7,7 @@ $.ckName = $.arguments?.ckName || "default";//变量名
 $.isGetCookie = $.arguments?.isGetCookie || "1"//是否打开获取cookie
 $.retry = parseInt($.arguments?.retry) || 1;//重放次数
 $.sleep = parseInt($.arguments?.sleep) || 0;//重放间隔,单位为ms
+$.bodyRegx = $.arguments?.bodyRegx || "";//body正则匹配
 
 //主程序执行入口
 !(async () => {
@@ -42,7 +43,7 @@ async function main() {
                     if ($.sleep >= 0) await $.wait(parseInt($.sleep));
                 }
                 result = uniqueObjects(result);
-                let message = result.map((item, index) => ` ├ tree${index+1}:${item}`).join("\n");
+                let message = result.map((item, index) => ` ├ tree${index + 1}:${item}`).join("\n");
                 $.msg($.name, "✅ retry record data success!", `${message}\n └ retryCount: ${$.retry}`)
             }
         } else {
@@ -81,14 +82,16 @@ function executeCode(res, codeString) {
 
 function getCookie() {
     try {
-        const url = $request?.url;
-        const headers = $request?.headers
-        const method = $request?.method?.toLocaleLowerCase();
-        const body = $request?.body;
-        let opts = { url, headers, method, body }
-        $.setjson(opts, `@sliverkiss.record.${$.ckName}.opts`);
-        let result = url && method ? "✅ create/update record data success!" : "❌ create/update record data error!"
-        $.msg($.name, result, ` ├ url: ${opts?.url} \n ├ method: ${opts?.method} \n └ body: ${opts?.body} `);
+        if (!$request?.body || !$.bodyRegx || isMatch($request?.body, $.bodyRegx)) {
+            const url = $request?.url;
+            const headers = $request?.headers
+            const method = $request?.method?.toLocaleLowerCase();
+            const body = $request?.body;
+            let opts = { url, headers, method, body }
+            $.setjson(opts, `@sliverkiss.record.${$.ckName}.opts`);
+            let result = url && method ? "✅ create/update record data success!" : "❌ create/update record data error!"
+            $.msg($.name, result, ` ├ url: ${opts?.url} \n ├ method: ${opts?.method} \n └ body: ${opts?.body} `);
+        }
     } catch (e) {
         throw e;
     }
@@ -109,6 +112,18 @@ function uniqueObjects(array) {
         seen.add(key);
         return true;
     });
+}
+
+//正则判断body是否匹配
+function isMatch(res, regexString) {
+    // 确保 res 是字符串，如果不是，则转换为 JSON 字符串
+    const stringToMatch = typeof res === 'string' ? res : JSON.stringify(res);
+
+    // 创建正则表达式对象
+    const regex = new RegExp(regexString);
+
+    // 判断字符串是否匹配正则表达式
+    return regex.test(stringToMatch);
 }
 
 //封装一个获取Surge参数的方法
