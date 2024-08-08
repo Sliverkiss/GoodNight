@@ -13,7 +13,7 @@ $.bodyRegx = $.arguments?.bodyRegx || "";//body正则匹配
 !(async () => {
     try {
         if (typeof $request != "undefined") {
-            if ($.isGetCookie != "0") await getCookie();
+            if ($.isGetCookie == "1") await getCookie();
         } else {
             await main();
         }
