@@ -1,7 +1,7 @@
 //这是一个用于自动获取变量上传ck到青龙的辅助工具，低调使用，请勿在国内平台宣传
 
 //测试
-const moduleName = "🐉 什么值得买获取ck";
+const moduleName = "🐉 青龙面板上传ck";
 const $ = new Env(moduleName);
 //获取参数
 $.arguments = getArguments();
