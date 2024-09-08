@@ -1,7 +1,7 @@
 //这是一个用于自动获取变量上传ck到青龙的辅助工具，低调使用，请勿在国内平台宣传
 
 //测试
-const moduleName = "🐉 青龙面板上传ck";
+const moduleName = "🐉 什么值得买获取ck";
 const $ = new Env(moduleName);
 //获取参数
 $.arguments = getArguments();
@@ -24,7 +24,7 @@ $.bodyRegx = $.arguments?.bodyRegx || ""//是否匹配body，默认留空不匹�
     .finally(async () => {
         $.done({});
     });
-    
+
 async function getCookie() {
     try {
         if (!$.ckVal) return $.msg($.name, "⛔️scirpt run error", "请先在ckVal填写需要获取的内容");
@@ -36,7 +36,7 @@ async function getCookie() {
                 .map(e => parstTample(e));
             //获取到数据，开始上传青龙
             if (resultList.length) {
-                const ql = QingLong("https://tistzach.free.hr", "-m9ZiWr-CCTf", "faMfRhN00kbyk6T6_X7vS06o");
+                const ql = QingLong($.arguments?.host, $.arguments?.clientId, $.arguments?.secret);
                 $.info("开始进入青龙")
                 await ql.checkLogin();
                 $.info("开始获取环境变量")
@@ -126,11 +126,12 @@ function getArguments() {
     }
     $.info(`传入的 $argument: ${$.toStr(arg)} `);
 
-    arg = { ...arg, opts: { ...$.getjson(`@sliverkiss.record.${arg.ckName}.opts`) } };
+    arg = { ...arg, ...$.getjson(`SAKURA_QL`) }
+};
 
-    $.info(`从持久化存储读取参数后: ${$.toStr(arg)} `);
+$.info(`从持久化存储读取参数后: ${$.toStr(arg)} `);
 
-    return arg;
+return arg;
 }
 
 // prettier-ignore
