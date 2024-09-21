@@ -1,7 +1,0 @@
-{
-	"BASE_URL": "https://ap-south-1.aws.data.mongodb-api.com/app/data-gkrxjno/endpoint/data/v1/action",
-	"DATA_SOURCE": "Sliverkiss",
-	"DATABASE": "yht",
-	"COLLECTION": "yht_db",
-	"API_KEY": "B0nLTBloCy06IXZ1uTPoBQRNuzGzzVJ0qBWE7gGX1mYNCdRBiKxIK4j8V3RDbkaM"
-}
