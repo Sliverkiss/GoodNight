@@ -1,4 +1,3 @@
-/*
 #!name=北京协和解锁挂号
 #!desc=将「已挂满」修改为「预约挂号」
 #!icon=https://raw.githubusercontent.com/sliverkiss/QuantumultX/main/icon/bjxh.png
@@ -9,4 +8,3 @@
 
 [MITM]
 hostname = api-xh.hsyuntai.com
-*/
