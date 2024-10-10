@@ -1,0 +1,12 @@
+/*
+#!name=北京协和解锁挂号
+#!desc=将「已挂满」修改为「预约挂号」
+#!icon=https://raw.githubusercontent.com/sliverkiss/QuantumultX/main/icon/bjxh.png
+#!date = 2024-10-10 08:41:41
+
+[URL Rewrite]
+^https:\/\/api-xh\.hsyuntai\.com\/hs-xh-single-web\/r\/173\/20002\/104 response-body-replace-regex "resNo":\s*\d+ "resNo":\x201
+
+[MITM]
+hostname = api-xh.hsyuntai.com
+*/
