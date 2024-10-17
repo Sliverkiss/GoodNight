@@ -262,7 +262,7 @@ function GetCookie() {
 async function getBlackBox() {
     try {
         const options = {
-            url: `https://deno.tistzach.free.hr/f/getTuHuBlackBox`,
+            url: `https://deno.xn--ug8h.eu.org/f/getTuHuBlackBox`,
         }
         // 发起请求
         const result = await Request(options);
