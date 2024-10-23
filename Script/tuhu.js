@@ -262,7 +262,7 @@ function GetCookie() {
 async function getBlackBox() {
     try {
         const options = {
-            url: `https://deno.xn--ug8h.eu.org/f/getTuHuBlackBox`,
+            url: `https://tuhu.xn--ug8h.eu.org/blackbox`,
         }
         // 发起请求
         const result = await Request(options);
