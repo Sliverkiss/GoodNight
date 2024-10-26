@@ -3,7 +3,7 @@ const $ = new Env(moduleName);
 //获取参数
 $.arguments = getArguments();
 $.name = $.arguments?.scriptName || moduleName;//脚本名
-$.ckName = $.arguments?.ckName || "default";//变量名
+$.ckName = $.arguments?.ckName || $.getdata("sliverkiss_surge_retry") || "default";//变量名
 $.isGetCookie = $.arguments?.isGetCookie || "1"//是否打开获取cookie
 $.retry = parseInt($.arguments?.retry) || 1;//重放次数
 $.sleep = parseInt($.arguments?.sleep) || 0;//重放间隔,单位为ms
@@ -13,7 +13,7 @@ $.bodyRegx = $.arguments?.bodyRegx || "";//body正则匹配
 !(async () => {
     try {
         if (typeof $request != "undefined") {
-            if ($.isGetCookie == "1"||$.isGetCookie == 1) await getCookie();
+            if ($.isGetCookie != "0") await getCookie();
         } else {
             await main();
         }
@@ -136,7 +136,7 @@ function getArguments() {
     }
     $.info(`传入的 $argument: ${$.toStr(arg)} `);
 
-    arg = { ...arg, opts: { ...$.getjson(`@sliverkiss.record.${arg.ckName}.opts`) } };
+    arg = { ...arg, opts: { ...$.getjson(`@sliverkiss.record.${arg.ckName || $.getdata("sliverkiss_surge_retry")}.opts`) } };
 
     $.info(`从持久化存储读取参数后: ${$.toStr(arg)} `);
 
