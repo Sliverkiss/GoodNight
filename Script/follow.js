@@ -46,7 +46,7 @@ function sign() {
 function getArguments() {
     let arg;
     if (typeof $argument != 'undefined') {
-        arg = Object.fromEntries($argument.split('&').map(item => item.split('=')));
+        arg = Object.fromEntries($argument.split('&').map(item => item.split('=',2)));
     } else {
         arg = {};
     }
