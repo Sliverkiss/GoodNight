@@ -3,8 +3,8 @@ $.desc = []
 
 $.argument = getArguments();
 
-const csrfToken = $.getdata('follow_csrfToken') || $.argument?.follow_csrfToken;
-const cookie = $.getdata('follow_cookie') || $.argument?.follow_cookie;
+const csrfToken = $.argument["follow_csrfToken"] || $.getdata('follow_csrfToken');
+const cookie = $.argument["follow_cookie"] || $.getdata('follow_cookie');
 
 !(async () => {
     await sign()
@@ -50,6 +50,7 @@ function getArguments() {
     } else {
         arg = {};
     }
+    $.log($argument);
     $.log(`传入的 $argument: ${$.toStr(arg)} `);
 
     return arg;
