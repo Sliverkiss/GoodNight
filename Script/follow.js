@@ -46,11 +46,11 @@ function sign() {
 function getArguments() {
     let arg;
     if (typeof $argument != 'undefined') {
-        arg = Object.fromEntries($argument.split('&').map(item => item.split('=',2)));
+        arg = Object.fromEntries($argument.split('&').map(s => (i = s.indexOf('=')) < 0 ? [s, ''] : [s.slice(0, i), s.slice(i + 1)]));
     } else {
         arg = {};
     }
-    $.log(`传入的 $argument: ${$.toStr(arg)} `);
+    $.log(`传入的 $argument: ${$.toStr(arg)}`);
 
     return arg;
 }
