@@ -1,10 +1,10 @@
 const $ = new Env('follow 每日签到')
 $.desc = []
 
-$.argument=getArguments();
+$.argument = getArguments();
 
-const csrfToken = $.getdata('follow_csrfToken')||$.argument?.follow_csrfToken;
-const cookie = $.getdata('follow_cookie')||$.argument?.follow_cookie;
+const csrfToken = $.getdata('follow_csrfToken') || $.argument?.follow_csrfToken;
+const cookie = $.getdata('follow_cookie') || $.argument?.follow_cookie;
 
 !(async () => {
     await sign()
@@ -46,9 +46,7 @@ function sign() {
 function getArguments() {
     let arg;
     if (typeof $argument != 'undefined') {
-        arg = $.isLoon()
-            ? $argument
-            : Object.fromEntries($argument.split('&').map(item => item.split('=')));
+        arg = Object.fromEntries($argument.split('&').map(item => item.split('=')));
     } else {
         arg = {};
     }
