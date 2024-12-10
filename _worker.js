@@ -8,7 +8,6 @@ async function handleRequest(request) {
       const url = new URL(request.url);
       
       if (url.pathname === "/query/hello"&&request.method=="GET") {
-        if(!requestBody?.data) throw new Error("body缺少所需要的data");
         return jsonResponse({result:"Hello World"}, 200);
       }
 
