@@ -78,3 +78,6 @@
 - `POST /tasks` 接口用于添加新任务。
 - `POST /tasks/<key>/edit` 接口覆盖了任务的启用、禁用及修改内容的功能。
 - `POST /tasks/<key>/delete` 和 `POST /tasks/<key>/run` 分别用于删除和运行任务。
+- 所有参数均需通过 `application/x-www-form-urlencoded` 格式编码。  
+- 中文字符、特殊符号（如 `/`、`:`、空格等）需先进行 URL 编码后传递。
+- 所以接口返回的都是302主页重定向，只有传入数据错误才会返回相应报错信息
