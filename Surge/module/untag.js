@@ -3,7 +3,7 @@
 #!desc=网址：https://utgd.net/
 
 [Script]
-untag = type=http-response, pattern=https:\/\/api\.utgd\.net\/api\/v2\/(lesson|article)\/\d+\/, script-path=untag.js, requires-body=true, max-size=-1, timeout=1200
+untag = type=http-response, pattern=https:\/\/api\.utgd\.net\/api\/v2\/(lesson|article)\/\d+\/, script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/refs/heads/master/Surge/module/untag.js, requires-body=true, max-size=-1, timeout=1200
 
 [MITM]
 hostname = %APPEND% api.utgd.net
