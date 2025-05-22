@@ -3,11 +3,11 @@
 #!icon=https://github.com/Toperlock/Quantumult/raw/main/icon/Doraemon/Doraemon-1023.png
 
 [URL Rewrite]
-http://*.gamersky.com/.+/lists/getListElements response-body-json-jq '.listElements |= map(select(has("adCategory") | not))'
+http:\/\/.+\.gamersky.com/.+/lists/getListElements response-body-json-jq '.listElements |= map(select(has("adCategory") | not))'
 
 [Rewrite]
-^http:\/\/*\.gamersky\.com\/.+\/adSystem\/ad\/.+ - reject-dict
-https://*.gamersky.com/v1/statisticAd - reject-dict
+^http:\/\/.+\.gamersky\.com\/.+\/adSystem\/ad\/.+ - reject-dict
+https://.+\.gamersky.com/v1/statisticAd - reject-dict
 
 [MITM]
 hostname = *.gamersky.com
