@@ -1,6 +1,7 @@
 #!name=游民星空去广告
-#!desc=local
-#!icon=https://github.com/Toperlock/Quantumult/raw/main/icon/Doraemon/Doraemon-1023.png
+#!desc=移除开屏广告、列表广告
+#!author=Sliverkiss
+#!icon=https://raw.githubusercontent.com/sliverkiss/QuantumultX/main/icon/ymxk.png
 
 [URL Rewrite]
 http:\/\/.+\.gamersky.com/.+/lists/getListElements response-body-json-jq '.listElements |= map(select(has("adCategory") | not))'
