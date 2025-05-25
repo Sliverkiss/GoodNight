@@ -4,6 +4,7 @@
 #!icon=https://raw.githubusercontent.com/sliverkiss/QuantumultX/main/icon/ymxk.png
 
 [URL Rewrite]
+http:\/\/.+\.gamersky.com/.+/lists/getListElements request-body-json-jq 'if .listName == "相关内容列表" then del(.listName) else . end'
 http:\/\/.+\.gamersky.com/.+/lists/getListElements response-body-json-jq '.listElements |= map(select((has("adCategory") | not) and (.title != "近期热销推荐") and (.type != "game_topic_list")))'
 
 [Rewrite]
