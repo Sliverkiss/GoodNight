@@ -4,7 +4,7 @@
 #!icon=https://raw.githubusercontent.com/sliverkiss/QuantumultX/main/icon/ymxk.png
 
 [URL Rewrite]
-http:\/\/.+\.gamersky.com/.+/lists/getListElements response-body-json-jq '.listElements |= map(select(has("adCategory") | not))'
+http:\/\/.+\.gamersky.com/.+/lists/getListElements response-body-json-jq '.listElements |= map(select((has("adCategory") | not) and (.title != "近期热销推荐")))'
 
 [Rewrite]
 ^http:\/\/.+\.gamersky\.com\/.+\/adSystem\/ad\/.+ - reject-dict
