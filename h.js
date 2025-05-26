@@ -1,0 +1,1 @@
+let h=$response.body.replace(/var isMobile\(\)\{[^]*?\}/,`isMobile=()=>!0`).replace('</head>',`<script>Object.defineProperty(navigator,"userAgent",{value:"Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15",configurable:!1})</script></head>`);$done({body:h});
