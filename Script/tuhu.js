@@ -202,7 +202,7 @@ async function checkin(type, name) {
     };
 
     var result = await Request(opt);
-    if (result?.Code == 1) {
+    if (result?.data?.rewardIntegral) {
         msg += `${name}任务: 签到成功, 积分 +${result?.data?.rewardIntegral}, 连续签到: ${result?.data?.continuousDays}/7天 ✅`;
     } else {
         msg += `${name}任务: 签到失败, ${result?.message || $.toStr(result)}`;
