@@ -3,7 +3,7 @@
  * 活动规则：每日签到可获取积分奖励
  * 脚本说明：添加重写进入途虎养车小程序积分页面即可获取 Token，支持多账号，兼容 NE / Node.js 环境。
  * 环境变量：TUHU_TOKEN、TUHU_BLACKBOX / CODESERVER_ADDRESS、CODESERVER_FUN、TUHU_BLACKBOX
- * 更新时间：2024-03-20
+ * 更新时间：2025-09-27
  * 脚本作者：@FoKit，修复blackBox参数 by @Sliverkiss
 
 # BoxJs订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
@@ -104,13 +104,13 @@ async function main() {
 
             // 每日签到
             const taskMap = [
-                { "name": "软件", "url": "" },
-                { "name": "微信", "url": "?channel=wxapp" }
+                { "name": "软件", "type": "app" },
+                { "name": "微信", "type": "wxapp" }
             ]
             for (item of taskMap) {
                 //生成blackBox参数
                 await getBlackBox();
-                await checkin(item['url'], item['name']);
+                await checkin(item['type'], item['name']);
             }
 
             // 用户积分
@@ -179,23 +179,33 @@ async function whoami() {
 
 
 // 每日签到
-async function checkin(suffix, name) {
+async function checkin(type, name) {
     let msg = '';
     // 构造请求
     let opt = {
-        url: `https://api.tuhu.cn/user/UserCheckInVersion1${suffix}`,
+        url: `https://cl-gateway.tuhu.cn/cl-common-api/api/dailyCheckIn/userCheckIn`,
+        "_method": "post",
         headers: {
             'Authorization': $.token,
             'Content-Type': 'application/json',
-            'blackbox': $.blackbox
-        }
+            "authType": "oauth",
+            'blackbox': $.blackbox,
+            'Host': `cl-gateway.tuhu.cn`,
+            'api_level': `2`,
+            'channel': `iOS`,
+            'version': `7.40.0`,
+            'needErrorCode': `true`,
+        },
+        body: $.toStr({
+            "channel": type
+        })
     };
 
     var result = await Request(opt);
     if (result?.Code == 1) {
-        msg += `${name}任务: 签到成功, 积分 +${result.AddIntegral}, 连续签到: ${result.NeedDays}/7天 ✅`;
+        msg += `${name}任务: 签到成功, 积分 +${result?.data?.rewardIntegral}, 连续签到: ${result?.data?.rewardIntegral}/7天 ✅`;
     } else {
-        msg += `${name}任务: 签到失败, ${result?.Message || $.toStr(result)}`;
+        msg += `${name}任务: 签到失败, ${result?.message || $.toStr(result)}`;
     }
 
     $.messages.push(msg), $.log(msg);
